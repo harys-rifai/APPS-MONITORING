@@ -77,7 +77,7 @@
 
     @if($showModal)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
             <h3 class="text-lg font-semibold mb-4">{{ $userId ? 'Edit User' : 'Add User' }}</h3>
             <form wire:submit.prevent="save">
                 <div class="space-y-4">
@@ -122,7 +122,7 @@
 
     @if($showViewModal && $viewUser)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-lg">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h3 class="text-lg font-semibold mb-4">{{ $viewUser->name }}</h3>
             <div class="space-y-3">
                 <div class="flex justify-between">

@@ -107,7 +107,7 @@
 
         @if($showModal)
             <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-xl p-6 w-full max-w-2xl border border-gray-200 shadow-lg">
+                <div class="bg-white rounded-xl p-6 w-full max-w-4xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">{{ $databaseId ? 'Edit Database' : 'Add Database' }}</h2>
                     <form wire:submit.prevent="save">
                         <div class="grid grid-cols-2 gap-4">
@@ -184,7 +184,7 @@
 
         @if($showViewModal && $viewDatabase)
             <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-xl p-6 w-full max-w-lg border border-gray-200 shadow-lg">
+                <div class="bg-white rounded-xl p-6 w-full max-w-2xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold text-gray-800">Database Details</h2>
                         <button wire:click="closeViewModal" class="text-gray-400 hover:text-gray-600">
