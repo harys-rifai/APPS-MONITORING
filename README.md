@@ -14,24 +14,34 @@ Server and Database Monitoring System with Real-time Dashboard, Alert Notificati
 - Query metrics: Active, Idle, Locked counts
 - Configurable thresholds per database
 
-### 3. Spike Detection & Alerts
+### 3. Realtime Database Monitor
+- Direct connection to PostgreSQL databases via PDO
+- Real-time connection stats (Total, Active, Idle, Locked)
+- Database info: Version, Size, Table count, Max connections
+- Active connections: PID, User, App, Client IP, State, Query, Duration
+- Tables with size breakdown: Table Size, Index Size, Total Size
+- Auto-refresh every 5 seconds using Livewire polling
+- Pagination for both connections and tables
+
+### 4. Spike Detection & Alerts
 - Real-time threshold monitoring
 - Email notifications
 - Telegram Bot integration
 - Webhook support
 
-### 4. Recovery Alerts
+### 5. Recovery Alerts
 - Automatic OK status notifications when metrics return to normal
 
-### 5. Dashboard
+### 6. Dashboard
 - Real-time monitoring with Livewire + Tailwind CSS
-- Dark theme UI
+- Aurora/Glassmorphism UI theme
 - Server and database status overview
 - Recent alerts log
 
-### 6. Management
+### 7. Management
 - CRUD for servers and databases
-- Role-based access (Admin, Operator)
+- Search functionality on Server and Database list pages
+- View/Edit/Delete buttons for each record
 
 ## Tech Stack
 
@@ -103,13 +113,23 @@ DB::connection('pgsql_staging')->table('...')->get();
 ### Telegram Notifications (Optional)
 Add to `.env`:
 ```
-TELEGRAM_BOT_TOKEN=your_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
+TEGRAM_BOT_TOKEN=your_bot_token
+TEGRAM_CHAT_ID=your_chat_id
 ```
 
 ### API Endpoints
 - `POST /api/metrics` - Receive metrics from monitoring agents
 - `GET /api/health` - Health check
+
+## Routes
+
+| Route | Description |
+|-------|-------------|
+| `/dashboard` | Main dashboard |
+| `/servers` | Server list with CRUD |
+| `/databases` | Database list with CRUD |
+| `/database/{id}/monitor` | Realtime PostgreSQL monitor |
+| `/audit-logs` | Audit log viewer |
 
 ## Project Structure
 
@@ -134,8 +154,43 @@ app/
 ├── Http/Livewire/              # Livewire components
 │   ├── Dashboard.php
 │   ├── ServerList.php
-│   └── DatabaseList.php
+│   ├── DatabaseList.php
+│   └── RealtimeDatabaseMonitor.php
+├── Services/
+│   └── PostgreSqlConnector.php # PostgreSQL PDO connection
 └── Notifications/              # Notification classes
+```
+
+## PostgreSqlConnector Service
+
+The `PostgreSqlConnector` service provides direct PostgreSQL connections using PDO:
+
+```php
+$connector = new PostgreSqlConnector();
+
+$config = [
+    'host' => '127.0.0.1',
+    'port' => 5432,
+    'database' => 'mydb',
+    'username' => 'user',
+    'password' => 'pass',
+];
+
+// Get connection stats
+$stats = $connector->getDatabaseStats($config);
+// Returns: ['active' => 0, 'idle' => 0, 'locked' => 0, 'total' => 0]
+
+// Get database info
+$info = $connector->getDatabaseInfo($config);
+// Returns: ['version', 'size', 'tables', 'connections', 'max_connections']
+
+// Get active connections
+$connections = $connector->getConnectionInfo($config);
+// Returns: array of connections with PID, user, app, client_ip, state, query, duration
+
+// Get table stats with sizes
+$tables = $connector->getTableStats($config);
+// Returns: array of tables with n, name, schema, total_size, table_size, index_size
 ```
 
 ## Scheduler
@@ -169,6 +224,18 @@ requests.post('http://your-server/api/metrics', json={
     'network_out': net_out
 })
 ```
+
+## UI Features
+
+### Right Sidebar Layout
+- Collapsible sidebar (icon-only mode)
+- Hover tooltips showing menu names
+- Glassmorphism styling with gradient backgrounds
+
+### Aurora/Glassmorphism Theme
+- Primary color: Indigo (#6366f1)
+- Gradient backgrounds
+- Translucent cards with backdrop blur
 
 ## License
 
