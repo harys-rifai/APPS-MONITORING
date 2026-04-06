@@ -11,6 +11,7 @@ class DatabaseList extends Component
     use WithPagination;
 
     public $showModal = false;
+    public $showViewModal = false;
     public $databaseId = null;
     public $server_id = null;
     public $name = '';
@@ -25,6 +26,8 @@ class DatabaseList extends Component
     public $idle_threshold = 100;
     public $lock_threshold = 10;
     public $is_active = true;
+    public $search = '';
+    public $viewDatabase = null;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -38,7 +41,14 @@ class DatabaseList extends Component
 
     public function render()
     {
-        $databases = Database::with('server')->whereRaw('is_active = true')->paginate(10);
+        $databases = Database::with('server')
+            ->whereRaw('is_active = true')
+            ->where(function($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('host', 'like', '%' . $this->search . '%')
+                    ->orWhere('type', 'like', '%' . $this->search . '%');
+            })
+            ->paginate(10);
         return view('livewire.database-list', compact('databases'));
     }
 
@@ -70,6 +80,21 @@ class DatabaseList extends Component
     {
         $this->showModal = false;
         $this->resetFields();
+    }
+
+    public function viewDatabase($id)
+    {
+        $db = Database::with('server')->whereRaw('is_active = true')->find($id);
+        if ($db) {
+            $this->viewDatabase = $db;
+            $this->showViewModal = true;
+        }
+    }
+
+    public function closeViewModal()
+    {
+        $this->showViewModal = false;
+        $this->viewDatabase = null;
     }
 
     public function resetFields()

@@ -11,6 +11,7 @@ class ServerList extends Component
     use WithPagination;
 
     public $showModal = false;
+    public $showViewModal = false;
     public $serverId = null;
     public $name = '';
     public $hostname = '';
@@ -24,6 +25,8 @@ class ServerList extends Component
     public $location = '';
     public $api_token = '';
     public $is_active = true;
+    public $search = '';
+    public $viewServer = null;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -39,7 +42,13 @@ class ServerList extends Component
 
     public function render()
     {
-        $servers = Server::whereRaw('is_active = true')->paginate(10);
+        $servers = Server::whereRaw('is_active = true')
+            ->where(function($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('hostname', 'like', '%' . $this->search . '%')
+                    ->orWhere('ip', 'like', '%' . $this->search . '%');
+            })
+            ->paginate(10);
         return view('livewire.server-list', compact('servers'));
     }
 
@@ -70,6 +79,21 @@ class ServerList extends Component
     {
         $this->showModal = false;
         $this->resetFields();
+    }
+
+    public function viewServer($id)
+    {
+        $server = Server::whereRaw('is_active = true')->find($id);
+        if ($server) {
+            $this->viewServer = $server;
+            $this->showViewModal = true;
+        }
+    }
+
+    public function closeViewModal()
+    {
+        $this->showViewModal = false;
+        $this->viewServer = null;
     }
 
     public function resetFields()
