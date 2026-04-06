@@ -148,47 +148,47 @@
     @endif
 
     @if($showViewModal && $viewUser)
-    <div class="fixed inset-0 flex items-start justify-center z-50 pt-20">
+    <div class="fixed inset-0 flex items-start justify-center z-50 pt-16">
         <div class="fixed inset-0" wire:click="closeViewModal"></div>
-        <div class="bg-white rounded-xl p-6 w-full max-w-md border border-gray-200 shadow-lg relative z-10">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-indigo-100 rounded-lg">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg relative z-10">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 bg-indigo-100 rounded-lg">
+                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold">{{ $viewUser->name }}</h3>
+                    <h3 class="text-base font-semibold">{{ $viewUser->name }}</h3>
                 </div>
                 <button wire:click="closeViewModal" class="text-gray-400 hover:text-gray-600 p-1">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
-            <div class="space-y-3">
-                <div class="flex justify-between py-2 border-b">
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between py-1.5 border-b">
                     <span class="text-gray-500">Email:</span>
                     <span class="text-gray-800">{{ $viewUser->email }}</span>
                 </div>
-                <div class="flex justify-between py-2 border-b">
+                <div class="flex justify-between py-1.5 border-b">
                     <span class="text-gray-500">Corporate:</span>
                     <span class="text-gray-800">{{ $viewUser->corporate->name ?? '-' }}</span>
                 </div>
-                <div class="flex justify-between py-2 border-b">
+                <div class="flex justify-between py-1.5 border-b">
                     <span class="text-gray-500">Status:</span>
                     <span class="px-2 py-1 rounded text-xs font-medium {{ $viewUser->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
                         {{ $viewUser->is_active ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
-                <div class="flex justify-between py-2 border-b">
+                <div class="flex justify-between py-1.5 border-b">
                     <span class="text-gray-500">Created:</span>
                     <span class="text-gray-800">{{ $viewUser->created_at->format('Y-m-d H:i:s') }}</span>
                 </div>
             </div>
-            <div class="flex justify-end mt-6">
-                <button wire:click="closeViewModal" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Close</button>
+            <div class="flex justify-end mt-3">
+                <button wire:click="closeViewModal" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm">Close</button>
             </div>
         </div>
     </div>
