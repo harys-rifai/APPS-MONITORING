@@ -20,7 +20,7 @@ class CheckServerMetrics implements ShouldQueue
 
     public function handle(): void
     {
-        $servers = Server::where('is_active', true)->get();
+        $servers = Server::whereRaw('is_active = true')->get();
 
         foreach ($servers as $server) {
             try {

@@ -39,14 +39,14 @@ class ServerList extends Component
 
     public function render()
     {
-        $servers = Server::paginate(10);
+        $servers = Server::whereRaw('is_active = true')->paginate(10);
         return view('livewire.server-list', compact('servers'));
     }
 
     public function openModal($id = null)
     {
         if ($id) {
-            $server = Server::find($id);
+            $server = Server::whereRaw('is_active = true')->find($id);
             $this->serverId = $server->id;
             $this->name = $server->name;
             $this->hostname = $server->hostname;

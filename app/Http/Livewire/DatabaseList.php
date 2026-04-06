@@ -38,14 +38,14 @@ class DatabaseList extends Component
 
     public function render()
     {
-        $databases = Database::with('server')->paginate(10);
+        $databases = Database::with('server')->whereRaw('is_active = true')->paginate(10);
         return view('livewire.database-list', compact('databases'));
     }
 
     public function openModal($id = null)
     {
         if ($id) {
-            $db = Database::find($id);
+            $db = Database::whereRaw('is_active = true')->find($id);
             $this->databaseId = $db->id;
             $this->server_id = $db->server_id;
             $this->name = $db->name;

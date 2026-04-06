@@ -4,9 +4,8 @@ namespace App\Http\Livewire;
 
 use App\Models\Alert;
 use App\Models\Database;
-use App\Models\DbMetric;
 use App\Models\Server;
-use App\Models\ServerMetric;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -39,7 +38,7 @@ class Dashboard extends Component
     public function loadData()
     {
         $this->servers = Server::with('latestMetrics')
-            ->where('is_active', true)
+            ->whereRaw('is_active = true')
             ->get()
             ->map(function ($server) {
                 $server->status = $server->latestMetrics && 
@@ -52,7 +51,7 @@ class Dashboard extends Component
             ->toArray();
 
         $this->databases = Database::with('latestMetrics')
-            ->where('is_active', true)
+            ->whereRaw('is_active = true')
             ->get()
             ->map(function ($db) {
                 $db->status = $db->latestMetrics &&
@@ -70,8 +69,8 @@ class Dashboard extends Component
             ->toArray();
 
         $this->stats = [
-            'total_servers' => Server::where('is_active', true)->count(),
-            'total_databases' => Database::where('is_active', true)->count(),
+            'total_servers' => Server::whereRaw('is_active = true')->count(),
+            'total_databases' => Database::whereRaw('is_active = true')->count(),
             'spike_servers' => Server::where('status', 'spike')->count(),
             'spike_databases' => Database::where('status', 'spike')->count(),
             'total_alerts' => Alert::count(),

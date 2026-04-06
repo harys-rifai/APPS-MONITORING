@@ -20,7 +20,7 @@ class CheckDatabaseMetrics implements ShouldQueue
 
     public function handle(): void
     {
-        $databases = Db::where('is_active', true)->get();
+        $databases = Db::whereRaw('is_active = true')->get();
 
         foreach ($databases as $db) {
             try {

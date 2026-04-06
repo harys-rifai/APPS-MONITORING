@@ -106,7 +106,7 @@
                                 <label class="block text-sm text-gray-400 mb-1">Server</label>
                                 <select wire:model="server_id" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
                                     <option value="">None</option>
-                                    @foreach(\App\Models\Server::where('is_active', true)->get() as $server)
+                                    @foreach(\App\Models\Server::whereRaw('is_active = true')->get() as $server)
                                         <option value="{{ $server->id }}">{{ $server->name }}</option>
                                     @endforeach
                                 </select>
