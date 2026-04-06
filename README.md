@@ -241,6 +241,14 @@ requests.post('http://your-server/api/metrics', json={
 - Gradient backgrounds
 - Translucent cards with backdrop blur
 
+### Modal Improvements
+- Compact modal sizes (max-w-md for Users/Corporates, max-w-lg for Servers/Databases)
+- Icons in modal headers for visual context
+- Modal positioned below navbar using pt-20
+- No dark overlay (clean transparent background)
+- Scrollable content for long forms
+- Integrated Corporate selection in Server/Database forms
+
 ## License
 
 MIT License

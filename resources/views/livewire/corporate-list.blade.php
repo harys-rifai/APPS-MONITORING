@@ -50,7 +50,17 @@
                         </td>
                         <td class="py-3">
                             <div class="flex items-center gap-2">
-                                <button wire:click="viewCorporate({{ $corporate->id }})" class="text-indigo-600 hover:text-indigo-800 p-1" title="View">
+                                @php
+                                    $viewData = [
+                                        'name' => $corporate->name,
+                                        'location' => $corporate->location ?? 'N/A',
+                                        'users_count' => (string) $corporate->users->count(),
+                                        'servers_count' => (string) $corporate->servers->count(),
+                                        'databases_count' => (string) $corporate->databases->count(),
+                                        'status' => $corporate->is_active ? 'Active' : 'Inactive'
+                                    ];
+                                @endphp
+                                <button onclick="showViewModal('Corporate Details', JSON.parse('{{ addslashes(json_encode($viewData)) }}'))" class="text-indigo-600 hover:text-indigo-800 p-1" title="View">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -80,9 +90,16 @@
     </div>
 
     @if($showModal)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-2xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
-            <h3 class="text-lg font-semibold mb-4">{{ $corporateId ? 'Edit Corporate' : 'Add Corporate' }}</h3>
+    <div class="fixed inset-0 flex items-start justify-center z-50 pt-20">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md border border-gray-200 shadow-lg">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 bg-indigo-100 rounded-lg">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold">{{ $corporateId ? 'Edit Corporate' : 'Add Corporate' }}</h3>
+            </div>
             <form wire:submit.prevent="save">
                 <div class="space-y-4">
                     <div>

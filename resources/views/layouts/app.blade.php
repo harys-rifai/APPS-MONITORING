@@ -183,6 +183,40 @@
                     sidebar.style.width = '0';
                 }
             }
+
+            function showViewModal(title, data) {
+                let content = '';
+                if (typeof data === 'string') {
+                    data = JSON.parse(data);
+                }
+                for (const [key, value] of Object.entries(data)) {
+                    content += key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') + ': ' + value + '\n';
+                }
+                document.getElementById('viewModalTitle').textContent = title;
+                document.getElementById('viewModalContent').textContent = content;
+                document.getElementById('viewModalOverlay').classList.remove('hidden');
+            }
+
+            function closeViewModal() {
+                document.getElementById('viewModalOverlay').classList.add('hidden');
+            }
         </script>
+
+        <div id="viewModalOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-6 w-full max-w-2xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="viewModalTitle" class="text-xl font-semibold text-gray-800"></h2>
+                    <button onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <pre id="viewModalContent" class="text-gray-700 whitespace-pre-wrap font-sans"></pre>
+                <div class="flex justify-end mt-6">
+                    <button onclick="closeViewModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700">Close</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

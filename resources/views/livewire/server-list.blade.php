@@ -67,7 +67,22 @@
                                 </td>
                                 <td class="py-3">
                                     <div class="flex gap-2">
-                                        <button wire:click="viewServer({{ $server->id }})" class="text-indigo-600 hover:text-indigo-800" title="View">
+                                        @php
+                                            $viewData = [
+                                                'name' => $server->name,
+                                                'hostname' => $server->hostname,
+                                                'ip' => $server->ip,
+                                                'os' => $server->os,
+                                                'type' => $server->type,
+                                                'location' => $server->location ?? 'N/A',
+                                                'cpu_threshold' => $server->cpu_threshold ?? 'N/A',
+                                                'ram_threshold' => $server->ram_threshold ?? 'N/A',
+                                                'disk_threshold' => $server->disk_threshold ?? 'N/A',
+                                                'network_threshold' => $server->network_threshold ?? 'N/A',
+                                                'status' => $server->is_active ? 'Active' : 'Inactive'
+                                            ];
+                                        @endphp
+                                        <button onclick="showViewModal('Server Details', JSON.parse('{{ addslashes(json_encode($viewData)) }}'))" class="text-indigo-600 hover:text-indigo-800" title="View">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -97,12 +112,28 @@
         </div>
 
         @if($showModal)
-            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-xl p-6 w-full max-w-4xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">{{ $serverId ? 'Edit Server' : 'Add Server' }}</h2>
+            <div class="fixed inset-0 flex items-start justify-center z-50 pt-20">
+                <div class="bg-white rounded-xl p-6 w-full max-w-lg border border-gray-200 shadow-lg max-h-[80vh] overflow-y-auto">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800">{{ $serverId ? 'Edit Server' : 'Add Server' }}</h2>
+                    </div>
                     <form wire:submit.prevent="save">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Corporate</label>
+                                <select wire:model="corporate_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                    <option value="">Select Corporate</option>
+                                    @foreach(\App\Models\Corporate::whereRaw('is_active = true')->get() as $corporate)
+                                        <option value="{{ $corporate->id }}">{{ $corporate->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
                                 <label class="block text-sm text-gray-600 mb-1">Name</label>
                                 <input type="text" wire:model="name" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
                             </div>
@@ -114,47 +145,53 @@
                                 <label class="block text-sm text-gray-600 mb-1">IP Address</label>
                                 <input type="text" wire:model="ip" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
                             </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">OS</label>
-                                <select wire:model="os" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
-                                    <option value="linux">Linux</option>
-                                    <option value="windows">Windows</option>
-                                    <option value="macos">macOS</option>
-                                </select>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">OS</label>
+                                    <select wire:model="os" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                        <option value="linux">Linux</option>
+                                        <option value="windows">Windows</option>
+                                        <option value="macos">macOS</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Type</label>
+                                    <select wire:model="type" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                        <option value="server">Server</option>
+                                        <option value="db">Database</option>
+                                        <option value="both">Both</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">CPU Threshold (%)</label>
+                                    <input type="number" wire:model="cpu_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">RAM Threshold (%)</label>
+                                    <input type="number" wire:model="ram_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Disk Threshold (%)</label>
+                                    <input type="number" wire:model="disk_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Network (Mbps)</label>
+                                    <input type="number" wire:model="network_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Type</label>
-                                <select wire:model="type" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
-                                    <option value="server">Server</option>
-                                    <option value="db">Database</option>
-                                    <option value="both">Both</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">CPU Threshold (%)</label>
-                                <input type="number" wire:model="cpu_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">RAM Threshold (%)</label>
-                                <input type="number" wire:model="ram_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Disk Threshold (%)</label>
-                                <input type="number" wire:model="disk_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Network Threshold (Mbps)</label>
-                                <input type="number" wire:model="network_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <div class="col-span-2">
                                 <label class="block text-sm text-gray-600 mb-1">Location</label>
                                 <input type="text" wire:model="location" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
                             </div>
-                            <div class="col-span-2">
+                            <div>
                                 <label class="block text-sm text-gray-600 mb-1">API Token</label>
                                 <input type="text" wire:model="api_token" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-indigo-500">
                             </div>
-                            <div class="col-span-2">
+                            <div>
                                 <label class="flex items-center gap-2">
                                     <input type="checkbox" wire:model="is_active" class="rounded bg-gray-50 border-gray-200">
                                     <span class="text-sm text-gray-600">Active</span>

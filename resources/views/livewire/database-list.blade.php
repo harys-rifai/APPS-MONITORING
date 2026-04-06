@@ -76,7 +76,20 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                             </svg>
                                         </a>
-                                        <button wire:click="viewDatabase({{ $db->id }})" class="text-gray-600 hover:text-gray-800" title="View">
+                                        @php
+                                            $viewData = [
+                                                'name' => $db->name,
+                                                'type' => $db->type,
+                                                'host' => $db->host . ':' . $db->port,
+                                                'database' => $db->database ?? 'N/A',
+                                                'server' => $db->server->name ?? 'N/A',
+                                                'active_threshold' => $db->active_threshold ?? 'N/A',
+                                                'idle_threshold' => $db->idle_threshold ?? 'N/A',
+                                                'lock_threshold' => $db->lock_threshold ?? 'N/A',
+                                                'status' => $db->is_active ? 'Active' : 'Inactive'
+                                            ];
+                                        @endphp
+                                        <button onclick="showViewModal('Database Details', JSON.parse('{{ addslashes(json_encode($viewData)) }}'))" class="text-gray-600 hover:text-gray-800" title="View">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -106,67 +119,91 @@
         </div>
 
         @if($showModal)
-            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-xl p-6 w-full max-w-4xl border border-gray-200 shadow-lg max-h-[90vh] overflow-y-auto">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">{{ $databaseId ? 'Edit Database' : 'Add Database' }}</h2>
+            <div class="fixed inset-0 flex items-start justify-center z-50 pt-20">
+                <div class="bg-white rounded-xl p-6 w-full max-w-lg border border-gray-200 shadow-lg max-h-[80vh] overflow-y-auto">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 bg-indigo-100 rounded-lg">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800">{{ $databaseId ? 'Edit Database' : 'Add Database' }}</h2>
+                    </div>
                     <form wire:submit.prevent="save">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <label class="block text-sm text-gray-600 mb-1">Name</label>
-                                <input type="text" wire:model="name" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                            </div>
+                        <div class="space-y-4">
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Type</label>
-                                <select wire:model="type" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                                    <option value="postgres">PostgreSQL</option>
-                                    <option value="mysql">MySQL</option>
-                                    <option value="sqlserver">SQL Server</option>
-                                    <option value="db2">DB2</option>
-                                    <option value="oracle">Oracle</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Server</label>
-                                <select wire:model="server_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                                    <option value="">None</option>
-                                    @foreach(\App\Models\Server::whereRaw('is_active = true')->get() as $server)
-                                        <option value="{{ $server->id }}">{{ $server->name }}</option>
+                                <label class="block text-sm text-gray-600 mb-1">Corporate</label>
+                                <select wire:model="corporate_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <option value="">Select Corporate</option>
+                                    @foreach(\App\Models\Corporate::whereRaw('is_active = true')->get() as $corporate)
+                                        <option value="{{ $corporate->id }}">{{ $corporate->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Host</label>
-                                <input type="text" wire:model="host" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                <label class="block text-sm text-gray-600 mb-1">Name</label>
+                                <input type="text" wire:model="name" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Type</label>
+                                    <select wire:model="type" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                        <option value="postgres">PostgreSQL</option>
+                                        <option value="mysql">MySQL</option>
+                                        <option value="sqlserver">SQL Server</option>
+                                        <option value="db2">DB2</option>
+                                        <option value="oracle">Oracle</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Server</label>
+                                    <select wire:model="server_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                        <option value="">None</option>
+                                        @foreach(\App\Models\Server::whereRaw('is_active = true')->get() as $server)
+                                            <option value="{{ $server->id }}">{{ $server->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Host</label>
+                                    <input type="text" wire:model="host" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Port</label>
+                                    <input type="number" wire:model="port" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Username</label>
+                                    <input type="text" wire:model="username" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Password</label>
+                                    <input type="password" wire:model="password" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Port</label>
-                                <input type="number" wire:model="port" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Username</label>
-                                <input type="text" wire:model="username" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Password</label>
-                                <input type="password" wire:model="password" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div class="col-span-2">
                                 <label class="block text-sm text-gray-600 mb-1">Database Name</label>
                                 <input type="text" wire:model="database" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
                             </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Active Threshold</label>
-                                <input type="number" wire:model="active_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Idle Threshold</label>
-                                <input type="number" wire:model="idle_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Active Threshold</label>
+                                    <input type="number" wire:model="active_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Idle Threshold</label>
+                                    <input type="number" wire:model="idle_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Locked Threshold</label>
                                 <input type="number" wire:model="lock_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
                             </div>
-                            <div class="col-span-2">
+                            <div>
                                 <label class="flex items-center gap-2">
                                     <input type="checkbox" wire:model="is_active" class="rounded bg-gray-50 border-gray-200">
                                     <span class="text-sm text-gray-600">Active</span>

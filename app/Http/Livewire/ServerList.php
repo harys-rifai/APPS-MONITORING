@@ -84,6 +84,7 @@ class ServerList extends Component
             $this->location = $server->location ?? '';
             $this->api_token = $server->api_token ?? '';
             $this->is_active = $server->is_active;
+            $this->corporate_id = $server->corporate_id;
         } else {
             $this->resetFields();
         }
@@ -114,6 +115,7 @@ class ServerList extends Component
     public function resetFields()
     {
         $this->serverId = null;
+        $this->corporate_id = null;
         $this->name = '';
         $this->hostname = '';
         $this->ip = '';
@@ -131,9 +133,7 @@ class ServerList extends Component
     public function save()
     {
         $this->validate();
-        $user = Auth::user();
-        $corporateId = $user ? $user->corporate_id : null;
-
+        
         if ($this->serverId) {
             Server::find($this->serverId)->update([
                 'name' => $this->name,
@@ -148,7 +148,7 @@ class ServerList extends Component
                 'location' => $this->location,
                 'api_token' => $this->api_token,
                 'is_active' => $this->is_active,
-                'corporate_id' => $corporateId,
+                'corporate_id' => $this->corporate_id,
             ]);
         } else {
             Server::create([
@@ -164,7 +164,7 @@ class ServerList extends Component
                 'location' => $this->location,
                 'api_token' => $this->api_token,
                 'is_active' => $this->is_active,
-                'corporate_id' => $corporateId,
+                'corporate_id' => $this->corporate_id,
             ]);
         }
 
