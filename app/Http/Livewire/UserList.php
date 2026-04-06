@@ -102,7 +102,16 @@ class UserList extends Component
 
     public function save()
     {
-        $this->validate();
+        if ($this->userId) {
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $this->userId,
+                'password' => 'nullable|string|min:8',
+                'corporate_id' => 'required',
+            ]);
+        } else {
+            $this->validate();
+        }
 
         $data = [
             'name' => $this->name,
