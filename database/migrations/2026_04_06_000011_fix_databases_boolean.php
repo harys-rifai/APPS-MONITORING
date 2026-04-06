@@ -9,6 +9,8 @@ return new class extends Migration
     {
         DB::statement('ALTER TABLE databases ALTER COLUMN is_active TYPE boolean USING is_active::boolean');
         DB::statement('ALTER TABLE databases ALTER COLUMN is_active SET DEFAULT true');
+        DB::statement('ALTER TABLE servers ALTER COLUMN is_active TYPE boolean USING is_active::boolean');
+        DB::statement('ALTER TABLE servers ALTER COLUMN is_active SET DEFAULT true');
     }
 
     public function down(): void

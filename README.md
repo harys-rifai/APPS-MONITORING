@@ -84,6 +84,22 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
+### Staging Database Connection (Optional)
+For staging environment:
+```
+DB_STAGING_CONNECTION=pgsql
+DB_STAGING_HOST=ep-blue-morning-am69itpc-pooler.c-5.us-east-1.aws.neon.tech
+DB_STAGING_PORT=5432
+DB_STAGING_DATABASE=neondb
+DB_STAGING_USERNAME=neondb_owner
+DB_STAGING_PASSWORD=your_password
+```
+
+Usage in code:
+```php
+DB::connection('pgsql_staging')->table('...')->get();
+```
+
 ### Telegram Notifications (Optional)
 Add to `.env`:
 ```

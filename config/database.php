@@ -98,7 +98,25 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
             'options' => [
-                \PDO::ATTR_EMULATE_PREPARES => true,
+                \PDO::ATTR_EMULATE_PREPARES => false,
+            ],
+        ],
+
+        'pgsql_staging' => [
+            'driver' => 'pgsql',
+            'url' => env('DB_STAGING_URL'),
+            'host' => env('DB_STAGING_HOST', 'ep-blue-morning-am69itpc-pooler.c-5.us-east-1.aws.neon.tech'),
+            'port' => env('DB_STAGING_PORT', '5432'),
+            'database' => env('DB_STAGING_DATABASE', 'neondb'),
+            'username' => env('DB_STAGING_USERNAME', 'neondb_owner'),
+            'password' => env('DB_STAGING_PASSWORD', ''),
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'require',
+            'options' => [
+                \PDO::ATTR_EMULATE_PREPARES => false,
             ],
         ],
 

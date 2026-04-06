@@ -18,14 +18,9 @@ class Server extends Model
         'is_active' => 'boolean',
     ];
 
-    protected function initialize()
+    public function setIsActiveAttribute($value): void
     {
-        $this->attributes['is_active'] = $this->is_active ? true : false;
-    }
-
-    protected function setIsActiveAttribute($value)
-    {
-        $this->attributes['is_active'] = $value === true || $value === 'true' || $value === 1 || $value === '1';
+        $this->attributes['is_active'] = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $value;
     }
 
     public function databases(): HasMany

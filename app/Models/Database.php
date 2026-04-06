@@ -19,6 +19,11 @@ class Database extends Model
         'is_active' => 'boolean',
     ];
 
+    protected function setIsActiveAttribute($value)
+    {
+        $this->attributes['is_active'] = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $value;
+    }
+
     public function server(): BelongsTo
     {
         return $this->belongsTo(Server::class);
