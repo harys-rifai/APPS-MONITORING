@@ -119,9 +119,9 @@
         </div>
 
         @if($showModal)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16" x-data="{ loading: false }">
+            <div class="fixed inset-0 flex items-start justify-center z-50 pt-12" x-data="{ loading: false }">
                 <div class="fixed inset-0" wire:click="closeModal"></div>
-                <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
+                <div class="bg-white rounded-xl p-3 w-full max-w-lg border border-gray-200 shadow-lg max-h-[65vh] overflow-y-auto relative z-10">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             <div class="p-1.5 bg-indigo-100 rounded-lg">
@@ -138,7 +138,7 @@
                         </button>
                     </div>
                     <form wire:submit.prevent="save" @submit="loading = true">
-                        <div class="space-y-3">
+                        <div class="space-y-2">
                             <div>
                                 <label class="block text-xs text-gray-600 mb-1">Corporate</label>
                                 <select wire:model="corporate_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
