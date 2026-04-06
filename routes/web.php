@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Livewire\AuditLogList;
+use App\Http\Livewire\CorporateList;
 use App\Http\Livewire\DatabaseList;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\RealtimeDatabaseMonitor;
@@ -16,6 +17,7 @@ Route::get('/dashboard', Dashboard::class)->middleware(['auth', 'verified'])->na
 Route::get('/servers', ServerList::class)->middleware(['auth', 'verified'])->name('servers');
 Route::get('/databases', DatabaseList::class)->middleware(['auth', 'verified'])->name('databases');
 Route::get('/database/{id}/monitor', RealtimeDatabaseMonitor::class)->middleware(['auth', 'verified'])->name('database.monitor');
+Route::get('/corporates', CorporateList::class)->middleware(['auth', 'verified'])->name('corporates');
 Route::get('/audit-logs', AuditLogList::class)->middleware(['auth', 'verified'])->name('audit-logs');
 
 Route::middleware('auth')->group(function () {

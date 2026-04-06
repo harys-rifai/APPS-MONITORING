@@ -14,7 +14,7 @@ class Database extends Model
         'server_id', 'name', 'type', 'connection_name',
         'host', 'port', 'username', 'password', 'database',
         'active_threshold', 'idle_threshold', 'lock_threshold',
-        'status', 'is_active', 'role_id'
+        'status', 'is_active', 'role_id', 'corporate_id'
     ];
 
     protected $casts = [
@@ -24,6 +24,11 @@ class Database extends Model
     protected function setIsActiveAttribute($value)
     {
         $this->attributes['is_active'] = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $value;
+    }
+
+    public function corporate(): BelongsTo
+    {
+        return $this->belongsTo(Corporate::class);
     }
 
     public function server(): BelongsTo

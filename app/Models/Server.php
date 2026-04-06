@@ -13,12 +13,17 @@ class Server extends Model
     protected $fillable = [
         'name', 'hostname', 'ip', 'os', 'type',
         'cpu_threshold', 'ram_threshold', 'disk_threshold', 'network_threshold',
-        'location', 'api_token', 'is_active', 'role_id'
+        'location', 'api_token', 'is_active', 'role_id', 'corporate_id'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function corporate(): BelongsTo
+    {
+        return $this->belongsTo(Corporate::class);
+    }
 
     public function setIsActiveAttribute($value): void
     {

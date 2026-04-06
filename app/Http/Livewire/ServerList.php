@@ -3,6 +3,8 @@
 namespace App\Http\Livewire;
 
 use App\Models\Server;
+use App\Models\Corporate;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -27,6 +29,8 @@ class ServerList extends Component
     public $is_active = true;
     public $search = '';
     public $viewServer = null;
+    public $corporate_id = null;
+    public $corporates = [];
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -40,9 +44,20 @@ class ServerList extends Component
         'network_threshold' => 'required|integer|min:1',
     ];
 
+    public function mount()
+    {
+        $this->corporates = Corporate::where('is_active', true)->get();
+    }
+
     public function render()
     {
+        $user = Auth::user();
+        $corporateId = $user ? $user->corporate_id : null;
+        
         $servers = Server::whereRaw('is_active = true')
+            ->when($corporateId, function($query) use ($corporateId) {
+                return $query->where('corporate_id', $corporateId);
+            })
             ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                     ->orWhere('hostname', 'like', '%' . $this->search . '%')
@@ -116,6 +131,8 @@ class ServerList extends Component
     public function save()
     {
         $this->validate();
+        $user = Auth::user();
+        $corporateId = $user ? $user->corporate_id : null;
 
         if ($this->serverId) {
             Server::find($this->serverId)->update([
@@ -131,6 +148,7 @@ class ServerList extends Component
                 'location' => $this->location,
                 'api_token' => $this->api_token,
                 'is_active' => $this->is_active,
+                'corporate_id' => $corporateId,
             ]);
         } else {
             Server::create([
@@ -146,6 +164,7 @@ class ServerList extends Component
                 'location' => $this->location,
                 'api_token' => $this->api_token,
                 'is_active' => $this->is_active,
+                'corporate_id' => $corporateId,
             ]);
         }
 

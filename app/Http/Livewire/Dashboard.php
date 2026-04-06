@@ -7,6 +7,7 @@ use App\Models\Database;
 use App\Models\Server;
 use App\Models\ServerMetric;
 use App\Models\DbMetric;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -41,8 +42,14 @@ class Dashboard extends Component
 
     public function loadData()
     {
+        $user = Auth::user();
+        $corporateId = $user ? $user->corporate_id : null;
+
         $this->servers = Server::with('latestMetrics')
             ->whereRaw('is_active = true')
+            ->when($corporateId, function($query) use ($corporateId) {
+                return $query->where('corporate_id', $corporateId);
+            })
             ->get()
             ->map(function ($server) {
                 $server->status = $server->latestMetrics && 
@@ -56,6 +63,9 @@ class Dashboard extends Component
 
         $this->databases = Database::with('latestMetrics')
             ->whereRaw('is_active = true')
+            ->when($corporateId, function($query) use ($corporateId) {
+                return $query->where('corporate_id', $corporateId);
+            })
             ->get()
             ->map(function ($db) {
                 $db->status = $db->latestMetrics &&
@@ -67,16 +77,33 @@ class Dashboard extends Component
             ->toArray();
 
         $this->recentAlerts = Alert::with('alertable')
+            ->when($corporateId, function($query) use ($corporateId) {
+                return $query->whereHasMorph('alertable', [Server::class, Database::class], function($q) use ($corporateId) {
+                    $q->where('corporate_id', $corporateId);
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->toArray();
 
         $this->stats = [
-            'total_servers' => Server::whereRaw('is_active = true')->count(),
-            'total_databases' => Database::whereRaw('is_active = true')->count(),
-            'spike_servers' => Server::where('status', 'spike')->count(),
-            'spike_databases' => Database::where('status', 'spike')->count(),
+            'total_servers' => Server::whereRaw('is_active = true')
+                ->when($corporateId, function($query) use ($corporateId) {
+                    return $query->where('corporate_id', $corporateId);
+                })->count(),
+            'total_databases' => Database::whereRaw('is_active = true')
+                ->when($corporateId, function($query) use ($corporateId) {
+                    return $query->where('corporate_id', $corporateId);
+                })->count(),
+            'spike_servers' => Server::where('status', 'spike')
+                ->when($corporateId, function($query) use ($corporateId) {
+                    return $query->where('corporate_id', $corporateId);
+                })->count(),
+            'spike_databases' => Database::where('status', 'spike')
+                ->when($corporateId, function($query) use ($corporateId) {
+                    return $query->where('corporate_id', $corporateId);
+                })->count(),
             'total_alerts' => Alert::count(),
             'recent_spikes' => Alert::where('status', 'spike')->where('created_at', '>=', now()->subHours(24))->count(),
         ];

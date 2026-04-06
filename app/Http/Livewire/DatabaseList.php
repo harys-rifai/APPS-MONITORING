@@ -3,6 +3,8 @@
 namespace App\Http\Livewire;
 
 use App\Models\Database;
+use App\Models\Corporate;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -41,8 +43,14 @@ class DatabaseList extends Component
 
     public function render()
     {
+        $user = Auth::user();
+        $corporateId = $user ? $user->corporate_id : null;
+        
         $databases = Database::with('server')
             ->whereRaw('is_active = true')
+            ->when($corporateId, function($query) use ($corporateId) {
+                return $query->where('corporate_id', $corporateId);
+            })
             ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                     ->orWhere('host', 'like', '%' . $this->search . '%')
@@ -118,7 +126,9 @@ class DatabaseList extends Component
     public function save()
     {
         $this->validate();
-
+        
+        $user = Auth::user();
+        $corporateId = $user ? $user->corporate_id : null;
         $connectionName = $this->connection_name ?: 'db_' . time();
 
         if ($this->databaseId) {
@@ -136,6 +146,7 @@ class DatabaseList extends Component
                 'idle_threshold' => $this->idle_threshold,
                 'lock_threshold' => $this->lock_threshold,
                 'is_active' => $this->is_active,
+                'corporate_id' => $corporateId,
             ]);
         } else {
             Database::create([
@@ -152,6 +163,7 @@ class DatabaseList extends Component
                 'idle_threshold' => $this->idle_threshold,
                 'lock_threshold' => $this->lock_threshold,
                 'is_active' => $this->is_active,
+                'corporate_id' => $corporateId,
             ]);
         }
 
