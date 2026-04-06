@@ -14,6 +14,7 @@ class ServerList extends Component
 
     public $showModal = false;
     public $showViewModal = false;
+    public $showDeleteModal = false;
     public $serverId = null;
     public $name = '';
     public $hostname = '';
@@ -176,5 +177,26 @@ class ServerList extends Component
     {
         Server::find($id)->delete();
         session()->flash('message', 'Server deleted successfully!');
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->serverId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->serverId = null;
+        $this->showDeleteModal = false;
+    }
+
+    public function executeDelete()
+    {
+        if ($this->serverId) {
+            Server::find($this->serverId)->delete();
+            session()->flash('message', 'Server deleted successfully!');
+        }
+        $this->cancelDelete();
     }
 }

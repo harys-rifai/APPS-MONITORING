@@ -14,6 +14,7 @@ class DatabaseList extends Component
 
     public $showModal = false;
     public $showViewModal = false;
+    public $showDeleteModal = false;
     public $databaseId = null;
     public $server_id = null;
     public $corporate_id = null;
@@ -176,5 +177,26 @@ class DatabaseList extends Component
     {
         Database::find($id)->delete();
         session()->flash('message', 'Database deleted successfully!');
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->databaseId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->databaseId = null;
+        $this->showDeleteModal = false;
+    }
+
+    public function executeDelete()
+    {
+        if ($this->databaseId) {
+            Database::find($this->databaseId)->delete();
+            session()->flash('message', 'Database deleted successfully!');
+        }
+        $this->cancelDelete();
     }
 }

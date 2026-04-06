@@ -13,6 +13,7 @@ class CorporateList extends Component
 
     public $showModal = false;
     public $showViewModal = false;
+    public $showDeleteModal = false;
     public $corporateId = null;
     public $name = '';
     public $location = '';
@@ -107,6 +108,27 @@ class CorporateList extends Component
     {
         Corporate::find($id)->delete();
         session()->flash('message', 'Corporate deleted successfully!');
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->corporateId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->corporateId = null;
+        $this->showDeleteModal = false;
+    }
+
+    public function executeDelete()
+    {
+        if ($this->corporateId) {
+            Corporate::find($this->corporateId)->delete();
+            session()->flash('message', 'Corporate deleted successfully!');
+        }
+        $this->cancelDelete();
     }
 
     public function toggleActive($id)

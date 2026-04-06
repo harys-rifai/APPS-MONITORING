@@ -14,6 +14,7 @@ class UserList extends Component
 
     public $showModal = false;
     public $showViewModal = false;
+    public $showDeleteModal = false;
     public $userId = null;
     public $name = '';
     public $email = '';
@@ -138,6 +139,27 @@ class UserList extends Component
     {
         User::find($id)->delete();
         session()->flash('message', 'User deleted successfully!');
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->userId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->userId = null;
+        $this->showDeleteModal = false;
+    }
+
+    public function executeDelete()
+    {
+        if ($this->userId) {
+            User::find($this->userId)->delete();
+            session()->flash('message', 'User deleted successfully!');
+        }
+        $this->cancelDelete();
     }
 
     public function toggleActive($id)
