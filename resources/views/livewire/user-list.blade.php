@@ -1,13 +1,13 @@
-@section('title', 'Corporate Management')
-<div class="glass-card">
+@section('title', 'User Management')
+<div class="glass-card" wire:init="render">
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Corporate Management</h2>
+            <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
             <button wire:click="openModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                Add Corporate
+                Add User
             </button>
         </div>
 
@@ -18,7 +18,7 @@
         @endif
 
         <div class="mb-4">
-            <input type="text" wire:model.live="search" placeholder="Search corporate..." 
+            <input type="text" wire:model.live="search" placeholder="Search users..." 
                 class="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
         </div>
 
@@ -27,41 +27,37 @@
                 <thead>
                     <tr class="text-left text-sm text-gray-500 border-b border-gray-200">
                         <th class="pb-3 font-medium">Name</th>
-                        <th class="pb-3 font-medium">Location</th>
-                        <th class="pb-3 font-medium">Users</th>
-                        <th class="pb-3 font-medium">Servers</th>
-                        <th class="pb-3 font-medium">Databases</th>
+                        <th class="pb-3 font-medium">Email</th>
+                        <th class="pb-3 font-medium">Corporate</th>
                         <th class="pb-3 font-medium">Status</th>
                         <th class="pb-3 font-medium">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach($corporates as $corporate)
+                    @foreach($users as $user)
                     <tr class="hover:bg-gray-50">
-                        <td class="py-3 text-sm text-gray-800 font-medium">{{ $corporate->name }}</td>
-                        <td class="py-3 text-sm text-gray-600">{{ $corporate->location ?? '-' }}</td>
-                        <td class="py-3 text-sm text-gray-600">{{ $corporate->users->count() }}</td>
-                        <td class="py-3 text-sm text-gray-600">{{ $corporate->servers->count() }}</td>
-                        <td class="py-3 text-sm text-gray-600">{{ $corporate->databases->count() }}</td>
+                        <td class="py-3 text-sm text-gray-800 font-medium">{{ $user->name }}</td>
+                        <td class="py-3 text-sm text-gray-600">{{ $user->email }}</td>
+                        <td class="py-3 text-sm text-gray-600">{{ $user->corporate->name ?? '-' }}</td>
                         <td class="py-3">
-                            <button wire:click="toggleActive({{ $corporate->id }})" class="px-2 py-1 rounded text-xs font-medium {{ $corporate->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                {{ $corporate->is_active ? 'Active' : 'Inactive' }}
+                            <button wire:click="toggleActive({{ $user->id }})" class="px-2 py-1 rounded text-xs font-medium {{ $user->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
+                                {{ $user->is_active ? 'Active' : 'Inactive' }}
                             </button>
                         </td>
                         <td class="py-3">
                             <div class="flex items-center gap-2">
-                                <button wire:click="viewCorporate({{ $corporate->id }})" class="text-indigo-600 hover:text-indigo-800 p-1" title="View">
+                                <button wire:click="viewUser({{ $user->id }})" class="text-indigo-600 hover:text-indigo-800 p-1" title="View">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                     </svg>
                                 </button>
-                                <button wire:click="openModal({{ $corporate->id }})" class="text-blue-600 hover:text-blue-800 p-1" title="Edit">
+                                <button wire:click="openModal({{ $user->id }})" class="text-blue-600 hover:text-blue-800 p-1" title="Edit">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </button>
-                                <button wire:click="delete({{ $corporate->id }})" class="text-red-600 hover:text-red-800 p-1" title="Delete" onclick="return confirm('Are you sure?')">
+                                <button wire:click="delete({{ $user->id }})" class="text-red-600 hover:text-red-800 p-1" title="Delete" onclick="return confirm('Are you sure?')">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                     </svg>
@@ -75,14 +71,14 @@
         </div>
 
         <div class="mt-4">
-            {{ $corporates->links() }}
+            {{ $users->links() }}
         </div>
     </div>
 
     @if($showModal)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 class="text-lg font-semibold mb-4">{{ $corporateId ? 'Edit Corporate' : 'Add Corporate' }}</h3>
+            <h3 class="text-lg font-semibold mb-4">{{ $userId ? 'Edit User' : 'Add User' }}</h3>
             <form wire:submit.prevent="save">
                 <div class="space-y-4">
                     <div>
@@ -91,8 +87,24 @@
                         @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <input type="text" wire:model="location" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" wire:model="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" wire:model="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="{{ $userId ? 'Leave blank to keep current' : 'Min 8 characters' }}">
+                        @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Corporate</label>
+                        <select wire:model="corporate_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Select Corporate</option>
+                            @foreach($corporates as $corporate)
+                                <option value="{{ $corporate->id }}">{{ $corporate->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('corporate_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex items-center gap-2">
                         <input type="checkbox" wire:model="is_active" id="is_active" class="rounded border-gray-300 text-indigo-600">
@@ -108,56 +120,28 @@
     </div>
     @endif
 
-    @if($showViewModal && $viewCorporate)
+    @if($showViewModal && $viewUser)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-6 w-full max-w-lg">
-            <h3 class="text-lg font-semibold mb-4">{{ $viewCorporate->name }}</h3>
+            <h3 class="text-lg font-semibold mb-4">{{ $viewUser->name }}</h3>
             <div class="space-y-3">
                 <div class="flex justify-between">
-                    <span class="text-gray-500">Location:</span>
-                    <span class="text-gray-800">{{ $viewCorporate->location ?? '-' }}</span>
+                    <span class="text-gray-500">Email:</span>
+                    <span class="text-gray-800">{{ $viewUser->email }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Corporate:</span>
+                    <span class="text-gray-800">{{ $viewUser->corporate->name ?? '-' }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-500">Status:</span>
-                    <span class="px-2 py-1 rounded text-xs font-medium {{ $viewCorporate->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                        {{ $viewCorporate->is_active ? 'Active' : 'Inactive' }}
+                    <span class="px-2 py-1 rounded text-xs font-medium {{ $viewUser->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
+                        {{ $viewUser->is_active ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
-                <div class="border-t pt-3">
-                    <h4 class="font-medium text-gray-800 mb-2">Users ({{ $viewCorporate->users->count() }})</h4>
-                    @if($viewCorporate->users->count() > 0)
-                        <div class="flex flex-wrap gap-1">
-                            @foreach($viewCorporate->users as $user)
-                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">{{ $user->name }}</span>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-sm text-gray-500">No users assigned</p>
-                    @endif
-                </div>
-                <div class="border-t pt-3">
-                    <h4 class="font-medium text-gray-800 mb-2">Servers ({{ $viewCorporate->servers->count() }})</h4>
-                    @if($viewCorporate->servers->count() > 0)
-                        <div class="flex flex-wrap gap-1">
-                            @foreach($viewCorporate->servers as $server)
-                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">{{ $server->name }}</span>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-sm text-gray-500">No servers assigned</p>
-                    @endif
-                </div>
-                <div class="border-t pt-3">
-                    <h4 class="font-medium text-gray-800 mb-2">Databases ({{ $viewCorporate->databases->count() }})</h4>
-                    @if($viewCorporate->databases->count() > 0)
-                        <div class="flex flex-wrap gap-1">
-                            @foreach($viewCorporate->databases as $db)
-                                <span class="px-2 py-1 bg-gray-100 rounded text-xs">{{ $db->name }}</span>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-sm text-gray-500">No databases assigned</p>
-                    @endif
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Created:</span>
+                    <span class="text-gray-800">{{ $viewUser->created_at->format('Y-m-d H:i:s') }}</span>
                 </div>
             </div>
             <div class="flex justify-end mt-6">
