@@ -119,29 +119,29 @@
         </div>
 
         @if($showModal)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-20" x-data="{ loading: false }">
+            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16" x-data="{ loading: false }">
                 <div class="fixed inset-0" wire:click="closeModal"></div>
-                <div class="bg-white rounded-xl p-6 w-full max-w-lg border border-gray-200 shadow-lg max-h-[80vh] overflow-y-auto relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-indigo-100 rounded-lg">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1.5 bg-indigo-100 rounded-lg">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
                                 </svg>
                             </div>
-                            <h2 class="text-xl font-semibold text-gray-800">{{ $databaseId ? 'Edit Database' : 'Add Database' }}</h2>
+                            <h2 class="text-base font-semibold text-gray-800">{{ $databaseId ? 'Edit Database' : 'Add Database' }}</h2>
                         </div>
                         <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600 p-1">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
                     <form wire:submit.prevent="save" @submit="loading = true">
-                        <div class="space-y-4">
+                        <div class="space-y-3">
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Corporate</label>
-                                <select wire:model="corporate_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs text-gray-600 mb-1">Corporate</label>
+                                <select wire:model="corporate_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                     <option value="">Select Corporate</option>
                                     @foreach(\App\Models\Corporate::whereRaw('is_active = true')->get() as $corporate)
                                         <option value="{{ $corporate->id }}">{{ $corporate->name }}</option>
@@ -149,13 +149,13 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Name</label>
-                                <input type="text" wire:model="name" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs text-gray-600 mb-1">Name</label>
+                                <input type="text" wire:model="name" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Type</label>
-                                    <select wire:model="type" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <label class="block text-xs text-gray-600 mb-1">Type</label>
+                                    <select wire:model="type" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                         <option value="postgres">PostgreSQL</option>
                                         <option value="mysql">MySQL</option>
                                         <option value="sqlserver">SQL Server</option>
@@ -164,8 +164,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Server</label>
-                                    <select wire:model="server_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <label class="block text-xs text-gray-600 mb-1">Server</label>
+                                    <select wire:model="server_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                         <option value="">None</option>
                                         @foreach(\App\Models\Server::whereRaw('is_active = true')->get() as $server)
                                             <option value="{{ $server->id }}">{{ $server->name }}</option>
@@ -173,60 +173,60 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Host</label>
-                                    <input type="text" wire:model="host" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <label class="block text-xs text-gray-600 mb-1">Host</label>
+                                    <input type="text" wire:model="host" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                 </div>
                                 <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Port</label>
-                                    <input type="number" wire:model="port" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Username</label>
-                                    <input type="text" wire:model="username" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Password</label>
-                                    <input type="password" wire:model="password" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <label class="block text-xs text-gray-600 mb-1">Port</label>
+                                    <input type="number" wire:model="port" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Database Name</label>
-                                <input type="text" wire:model="database" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Active Threshold</label>
-                                    <input type="number" wire:model="active_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <label class="block text-xs text-gray-600 mb-1">Username</label>
+                                    <input type="text" wire:model="username" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                 </div>
                                 <div>
-                                    <label class="block text-sm text-gray-600 mb-1">Idle Threshold</label>
-                                    <input type="number" wire:model="idle_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                    <label class="block text-xs text-gray-600 mb-1">Password</label>
+                                    <input type="password" wire:model="password" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Locked Threshold</label>
-                                <input type="number" wire:model="lock_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs text-gray-600 mb-1">Database Name</label>
+                                <input type="text" wire:model="database" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">Active</label>
+                                    <input type="number" wire:model="active_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">Idle</label>
+                                    <input type="number" wire:model="idle_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Locked</label>
+                                <input type="number" wire:model="lock_threshold" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500">
                             </div>
                             <div>
                                 <label class="flex items-center gap-2">
                                     <input type="checkbox" wire:model="is_active" class="rounded bg-gray-50 border-gray-200">
-                                    <span class="text-sm text-gray-600">Active</span>
+                                    <span class="text-xs text-gray-600">Active</span>
                                 </label>
                             </div>
                         </div>
-                        <div class="flex justify-end gap-3 mt-6">
-                            <button type="button" wire:click="closeModal" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700" :disabled="loading">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white flex items-center gap-2" :disabled="loading">
-                                <svg wire:loading class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <div class="flex justify-end gap-2 mt-3">
+                            <button type="button" wire:click="closeModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700" :disabled="loading">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm text-white flex items-center gap-1" :disabled="loading">
+                                <svg wire:loading class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 6.627 12 14s6.627 14 14 14v-4a8 8 0 01-8 8H4z"></path>
                                 </svg>
                                 <span x-show="!loading">Save</span>
-                                <span x-show="loading">Saving...</span>
+                                <span x-show="loading">...</span>
                             </button>
                         </div>
                     </form>
@@ -235,20 +235,20 @@
         @endif
 
         @if($showViewModal && $viewDatabase)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-20">
+            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16">
                 <div class="fixed inset-0" wire:click="closeViewModal"></div>
-                <div class="bg-white rounded-xl p-6 w-full max-w-2xl border border-gray-200 shadow-lg max-h-[80vh] overflow-y-auto relative z-10">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-indigo-100 rounded-lg">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1.5 bg-indigo-100 rounded-lg">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
                                 </svg>
                             </div>
-                            <h2 class="text-xl font-semibold text-gray-800">Database Details</h2>
+                            <h2 class="text-base font-semibold text-gray-800">Database Details</h2>
                         </div>
                         <button wire:click="closeViewModal" class="text-gray-400 hover:text-gray-600 p-1">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
@@ -297,28 +297,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-end mt-6">
-                        <button wire:click="closeViewModal" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700">Close</button>
+                    <div class="flex justify-end mt-3">
+                        <button wire:click="closeViewModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700">Close</button>
                     </div>
                 </div>
             </div>
         @endif
 
         @if($showDeleteModal)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-20">
+            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16">
                 <div class="fixed inset-0 bg-black/30" wire:click="cancelDelete"></div>
-                <div class="bg-white rounded-xl p-6 w-full max-w-sm border border-gray-200 shadow-lg relative z-10">
+                <div class="bg-white rounded-xl p-4 w-full max-w-sm border border-gray-200 shadow-lg relative z-10">
                     <div class="text-center">
-                        <div class="p-3 bg-red-100 rounded-full mx-auto w-12 h-12 flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-2 bg-red-100 rounded-full mx-auto w-10 h-10 flex items-center justify-center mb-3">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2">Delete Database</h3>
-                        <p class="text-gray-600 mb-6">Are you sure you want to delete this database? This action cannot be undone.</p>
-                        <div class="flex justify-center gap-3">
-                            <button wire:click="cancelDelete" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancel</button>
-                            <button wire:click="executeDelete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Delete</button>
+                        <h3 class="text-base font-semibold mb-2">Delete Database</h3>
+                        <p class="text-gray-600 text-sm mb-4">Are you sure? This action cannot be undone.</p>
+                        <div class="flex justify-center gap-2">
+                            <button wire:click="cancelDelete" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Cancel</button>
+                            <button wire:click="executeDelete" class="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">Delete</button>
                         </div>
                     </div>
                 </div>
