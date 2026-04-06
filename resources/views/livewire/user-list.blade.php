@@ -1,5 +1,5 @@
 @section('title', 'User Management')
-<div class="glass-card" wire:init="render">
+<div class="glass-card">
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
