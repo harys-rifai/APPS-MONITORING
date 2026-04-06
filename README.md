@@ -1,58 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DB Monitoring - Laravel 13 Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Server and Database Monitoring System with Real-time Dashboard, Alert Notifications, and Job Queue Processing.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 1. Server Monitoring
+- Monitor CPU, RAM, Disk, and Network usage
+- Configurable thresholds per server
+- Support for Linux, Windows, and macOS
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 2. Database Monitoring
+- Support for PostgreSQL, MySQL, SQL Server, DB2, and Oracle
+- Query metrics: Active, Idle, Locked counts
+- Configurable thresholds per database
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 3. Spike Detection & Alerts
+- Real-time threshold monitoring
+- Email notifications
+- Telegram Bot integration
+- Webhook support
 
-## Learning Laravel
+### 4. Recovery Alerts
+- Automatic OK status notifications when metrics return to normal
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 5. Dashboard
+- Real-time monitoring with Livewire + Tailwind CSS
+- Dark theme UI
+- Server and database status overview
+- Recent alerts log
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 6. Management
+- CRUD for servers and databases
+- Role-based access (Admin, Operator)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Tech Stack
 
-## Agentic Development
+- **Framework**: Laravel 13
+- **Database**: PostgreSQL (Neon)
+- **Queue**: Sync (configurable to Redis)
+- **UI**: TailwindCSS + Livewire
+- **Auth**: Laravel Breeze
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Installation
 
 ```bash
-composer require laravel/boost --dev
+# Clone the repository
+git clone https://github.com/harys-rifai/APPS-MONITORING.git
 
-php artisan boost:install
+# Install dependencies
+composer install
+
+# Install Node dependencies
+npm install
+
+# Build assets
+npm run build
+
+# Run migrations
+php artisan migrate
+
+# Seed database
+php artisan db:seed
+
+# Start server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Default Login
 
-## Contributing
+- **Email**: harys@google.com
+- **Password**: xcxcxc
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Configuration
 
-## Code of Conduct
+### Database Connection
+Update `.env` with your PostgreSQL credentials:
+```
+DB_CONNECTION=pgsql
+DB_HOST=ep-blue-morning-am69itpc-pooler.c-5.us-east-1.aws.neon.tech
+DB_PORT=5432
+DB_DATABASE=neondb
+DB_USERNAME=neondb_owner
+DB_PASSWORD=your_password
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Telegram Notifications
+Add to `.env`:
+```
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+```
 
-## Security Vulnerabilities
+### API Endpoints
+- `POST /api/metrics` - Receive metrics from monitoring agents
+- `GET /api/health` - Health check
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Project Structure
+
+```
+app/
+├── Console/Kernel.php          # Scheduler
+├── Events/                     # Event classes
+│   ├── ServerSpikeDetected.php
+│   ├── ServerRecovered.php
+│   ├── DatabaseSpikeDetected.php
+│   └── DatabaseRecovered.php
+├── Jobs/                       # Queue jobs
+│   ├── CheckServerMetrics.php
+│   └── CheckDatabaseMetrics.php
+├── Listeners/                  # Alert listeners
+├── Models/                     # Eloquent models
+│   ├── Server.php
+│   ├── Database.php
+│   ├── DbMetric.php
+│   ├── ServerMetric.php
+│   └── Alert.php
+├── Http/Livewire/              # Livewire components
+│   ├── Dashboard.php
+│   ├── ServerList.php
+│   └── DatabaseList.php
+└── Notifications/              # Notification classes
+```
+
+## Scheduler
+
+The scheduler runs every minute to check:
+1. Server metrics via API
+2. Database query statistics
+
+## Monitoring Agent
+
+Create a Python/PowerShell agent on target servers to send metrics:
+
+```python
+import requests
+import psutil
+
+# Get metrics
+cpu = psutil.cpu_percent()
+ram = psutil.virtual_memory().percent
+disk = psutil.disk_usage('/').percent
+net_in = psutil.net_io_counters().bytes_recv / 1024 / 1024
+net_out = psutil.net_io_counters().bytes_sent / 1024 / 1024
+
+# Send to API
+requests.post('http://your-server/api/metrics', json={
+    'api_token': 'server_api_token',
+    'cpu': cpu,
+    'ram': ram,
+    'disk': disk,
+    'network_in': net_in,
+    'network_out': net_out
+})
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT License
