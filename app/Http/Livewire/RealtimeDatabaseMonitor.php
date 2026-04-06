@@ -17,6 +17,8 @@ class RealtimeDatabaseMonitor extends Component
     public $error = null;
     public $isConnected = false;
     public $refreshInterval = 5000;
+    public $startTime;
+    public $uptime = '';
     
     public $connectionsPage = 1;
     public $tablesPage = 1;
@@ -27,6 +29,7 @@ class RealtimeDatabaseMonitor extends Component
     public function mount()
     {
         $this->databaseId = request()->route('id');
+        $this->startTime = time();
         if ($this->databaseId) {
             $this->loadData();
         }
@@ -58,9 +61,29 @@ class RealtimeDatabaseMonitor extends Component
             $this->tables = $connector->getTableStats($config);
             $this->isConnected = true;
             $this->error = null;
+            $this->uptime = $this->calculateUptime();
         } catch (\Exception $e) {
             $this->error = $e->getMessage();
             $this->isConnected = false;
+        }
+    }
+
+    private function calculateUptime(): string
+    {
+        $diff = time() - $this->startTime;
+        
+        if ($diff < 60) {
+            return $diff . 's';
+        } elseif ($diff < 3600) {
+            return floor($diff / 60) . 'm ' . ($diff % 60) . 's';
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            $mins = floor(($diff % 3600) / 60);
+            return $hours . 'h ' . $mins . 'm';
+        } else {
+            $days = floor($diff / 86400);
+            $hours = floor(($diff % 86400) / 3600);
+            return $days . 'd ' . $hours . 'h';
         }
     }
 
