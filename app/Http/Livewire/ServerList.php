@@ -5,7 +5,6 @@ namespace App\Http\Livewire;
 use App\Models\Server;
 use App\Models\Corporate;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -101,7 +100,6 @@ class ServerList extends Component
 
     public function viewServer($id)
     {
-        \Log::info('viewServer called with id: ' . $id);
         $server = Server::whereRaw('is_active = true')->find($id);
         if ($server) {
             $this->viewServer = $server;
