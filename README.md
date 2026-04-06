@@ -2,6 +2,10 @@
 
 Server and Database Monitoring System with Real-time Dashboard, Alert Notifications, and Job Queue Processing.
 
+## Screenshots
+
+![Dashboard](Screenshot%202026-04-06%20at%2018.13.47.png)
+
 ## Features
 
 ### 1. Server Monitoring
