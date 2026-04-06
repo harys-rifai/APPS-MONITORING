@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Database extends Model
+{
+    protected $fillable = [
+        'server_id', 'name', 'type', 'connection_name',
+        'host', 'port', 'username', 'password', 'database',
+        'active_threshold', 'idle_threshold', 'lock_threshold',
+        'status', 'is_active', 'role_id'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function server(): BelongsTo
+    {
+        return $this->belongsTo(Server::class);
+    }
+
+    public function metrics(): HasMany
+    {
+        return $this->hasMany(DbMetric::class);
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function latestMetrics()
+    {
+        return $this->hasOne(DbMetric::class)->latestOfMany();
+    }
+}
