@@ -5,6 +5,8 @@ namespace App\Http\Livewire;
 use App\Models\Alert;
 use App\Models\Database;
 use App\Models\Server;
+use App\Models\ServerMetric;
+use App\Models\DbMetric;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,6 +19,8 @@ class Dashboard extends Component
     public $databases = [];
     public $recentAlerts = [];
     public $stats = [];
+    public $serverChartData = [];
+    public $dbChartData = [];
 
     protected $listeners = ['refreshDashboard' => '$refresh'];
 
@@ -76,6 +80,84 @@ class Dashboard extends Component
             'total_alerts' => Alert::count(),
             'recent_spikes' => Alert::where('status', 'spike')->where('created_at', '>=', now()->subHours(24))->count(),
         ];
+
+        $this->loadChartData();
+    }
+
+    private function loadChartData()
+    {
+        $this->serverChartData = $this->getServerMetricsChart();
+        $this->dbChartData = $this->getDbMetricsChart();
+    }
+
+    private function getServerMetricsChart(): array
+    {
+        $metrics = ServerMetric::select(
+                DB::raw('DATE_TRUNC(\'hour\', created_at) as hour'),
+                DB::raw('AVG(cpu_usage) as cpu'),
+                DB::raw('AVG(ram_usage) as ram'),
+                DB::raw('AVG(disk_usage) as disk')
+            )
+            ->where('created_at', '>=', now()->subHours(24))
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->get();
+
+        return $metrics->map(fn($m) => [
+            'hour' => $m->hour->format('H:i'),
+            'cpu' => round($m->cpu, 1),
+            'ram' => round($m->ram, 1),
+            'disk' => round($m->disk, 1),
+        ])->toArray();
+    }
+
+    private function getDbMetricsChart(): array
+    {
+        $metrics = DbMetric::select(
+                DB::raw('DATE_TRUNC(\'hour\', created_at) as hour'),
+                DB::raw('SUM(active_count) as active'),
+                DB::raw('SUM(idle_count) as idle'),
+                DB::raw('SUM(locked_count) as locked')
+            )
+            ->where('created_at', '>=', now()->subHours(24))
+            ->groupBy('hour')
+            ->orderBy('hour')
+            ->get();
+
+        return $metrics->map(fn($m) => [
+            'hour' => $m->hour->format('H:i'),
+            'active' => (int) $m->active,
+            'idle' => (int) $m->idle,
+            'locked' => (int) $m->locked,
+        ])->toArray();
+    }
+
+    public function getServerTrend(int $serverId): array
+    {
+        return ServerMetric::where('server_id', $serverId)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at')
+            ->get()
+            ->map(fn($m) => [
+                'time' => $m->created_at->format('H:i'),
+                'cpu' => $m->cpu_usage,
+                'ram' => $m->ram_usage,
+                'disk' => $m->disk_usage,
+            ])->toArray();
+    }
+
+    public function getDatabaseTrend(int $databaseId): array
+    {
+        return DbMetric::where('database_id', $databaseId)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at')
+            ->get()
+            ->map(fn($m) => [
+                'time' => $m->created_at->format('H:i'),
+                'active' => $m->active_count,
+                'idle' => $m->idle_count,
+                'locked' => $m->locked_count,
+            ])->toArray();
     }
 
     public function render()

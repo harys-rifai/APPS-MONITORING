@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\Auditable;
 
 class Server extends Model
 {
+    use Auditable;
     protected $fillable = [
         'name', 'hostname', 'ip', 'os', 'type',
         'cpu_threshold', 'ram_threshold', 'disk_threshold', 'network_threshold',

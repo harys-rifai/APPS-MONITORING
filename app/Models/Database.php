@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\Auditable;
 
 class Database extends Model
 {
+    use Auditable;
     protected $fillable = [
         'server_id', 'name', 'type', 'connection_name',
         'host', 'port', 'username', 'password', 'database',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Livewire\AuditLogList;
 use App\Http\Livewire\DatabaseList;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\ServerList;
@@ -13,6 +14,7 @@ Route::get('/', function () {
 Route::get('/dashboard', Dashboard::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/servers', ServerList::class)->middleware(['auth', 'verified'])->name('servers');
 Route::get('/databases', DatabaseList::class)->middleware(['auth', 'verified'])->name('databases');
+Route::get('/audit-logs', AuditLogList::class)->middleware(['auth', 'verified'])->name('audit-logs');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
