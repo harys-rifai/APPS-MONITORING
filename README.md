@@ -242,12 +242,24 @@ requests.post('http://your-server/api/metrics', json={
 - Translucent cards with backdrop blur
 
 ### Modal Improvements
-- Compact modal sizes (max-w-md for Users/Corporates, max-w-lg for Servers/Databases)
+- Compact modal sizes (max-w-md for all pages)
+- Smaller padding (p-4), text (text-sm), buttons (px-3 py-1.5)
 - Icons in modal headers for visual context
-- Modal positioned below navbar using pt-20
+- Modal positioned below navbar using pt-16
+- X close button in top-right corner
+- Click outside to close modal
 - No dark overlay (clean transparent background)
-- Scrollable content for long forms
+- Scrollable content for long forms (max-h-[70vh])
 - Integrated Corporate selection in Server/Database forms
+- Debounced search input (300ms delay)
+- Loading spinner on save button
+- Custom delete confirmation modal
+- Red border on validation errors
+
+### View Modal
+- Livewire-powered view modals (no JS fallback)
+- Click outside to close
+- Smaller compact layout
 
 ## License
 
