@@ -74,17 +74,17 @@ php artisan serve
 ## Configuration
 
 ### Database Connection
-Update `.env` with your PostgreSQL credentials:
+Copy `.env.example` to `.env` and update with your PostgreSQL credentials:
 ```
 DB_CONNECTION=pgsql
-DB_HOST=ep-blue-morning-am69itpc-pooler.c-5.us-east-1.aws.neon.tech
+DB_HOST=your_host
 DB_PORT=5432
-DB_DATABASE=neondb
-DB_USERNAME=neondb_owner
+DB_DATABASE=your_db
+DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-### Telegram Notifications
+### Telegram Notifications (Optional)
 Add to `.env`:
 ```
 TELEGRAM_BOT_TOKEN=your_bot_token
