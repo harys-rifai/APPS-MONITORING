@@ -5,6 +5,7 @@ Advanced Server and Database Monitoring System with Multi-Tenant Architecture, R
 ## 🚀 Key Features
 
 ![Dashboard](docs/dashboard.png)
+![Server Detail](docs/server-detail.png)
 
 ### 1. Multi-Tenant Architecture
 - **Hierarchical Structure**: Organisation → Branch → Team.
