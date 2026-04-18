@@ -41,10 +41,13 @@ who writes code that others can easily understand, use, and scale.
 - **Real-time PostgreSQL Monitor**: Deep dive into active connections, query duration, and table sizes.
 
 ### 4. UI/UX (Modern & Responsive)
+- ✨ **Modern Glassmorphism Login**: Premium gradient background with animated particles, floating glass form card, neon glow inputs, shimmer button effects, floating labels, and responsive design.
 - **Aurora/Glassmorphism Theme**: Translucent cards with backdrop blur.
 - **Animated Header**: Real-time clock (WIB) and dynamic date positioning.
 - **Collapsible Sidebar**: Space-efficient navigation with tooltips.
 - **App Versioning**: Automatic version tracking displayed in the sidebar footer.
+
+**Updated:** Modern login page at `/login` features glassmorphism design with backdrop-blur effects, gradient buttons, floating labels, and smooth micro-interactions.
 
 ## 🛠️ Tech Stack
 

@@ -2,8 +2,8 @@
 
 @php
 $classes = ($active ?? false)
-        ? 'sidebar-item active'
-        : 'sidebar-item';
+            ? 'sidebar-item active'
+            : 'sidebar-item';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>

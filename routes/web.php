@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Livewire\AuditLogList;
-use App\Http\Livewire\organisationList;
+use App\Http\Livewire\BranchList;
+use App\Http\Livewire\OrganisationList;
 use App\Http\Livewire\DatabaseList;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\RealtimeDatabaseMonitor;
@@ -18,7 +19,8 @@ Route::get('/dashboard', Dashboard::class)->middleware(['auth', 'verified'])->na
 Route::get('/servers', ServerList::class)->middleware(['auth', 'verified'])->name('servers');
 Route::get('/databases', DatabaseList::class)->middleware(['auth', 'verified'])->name('databases');
 Route::get('/database/{id}/monitor', RealtimeDatabaseMonitor::class)->middleware(['auth', 'verified'])->name('database.monitor');
-Route::get('/organisations', organisationList::class)->middleware(['auth', 'verified'])->name('organisations');
+Route::get('/organisations', OrganisationList::class)->middleware(['auth', 'verified'])->name('organisations');
+Route::get('/branches', BranchList::class)->middleware(['auth', 'verified'])->name('branches');
 Route::get('/users', UserList::class)->middleware(['auth', 'verified'])->name('users');
 Route::get('/audit-logs', AuditLogList::class)->middleware(['auth', 'verified'])->name('audit-logs');
 Route::get('/language/{locale}', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('language.switch');

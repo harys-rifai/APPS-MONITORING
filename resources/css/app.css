@@ -1,3 +1,134 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl;
+  }
+
+  .login-glass-card {
+    @apply glass-card relative overflow-hidden bg-gradient-to-b from-white/90 to-white/70 dark:from-slate-800/80 dark:to-slate-900/60 border-white/30 dark:border-slate-700/50 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] before:absolute before:inset-0 before:bg-gradient-to-r before:from-indigo-500/5 before:to-purple-500/5 before:blur-xl;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl active:scale-95 focus:ring-4 focus:ring-indigo-500/30 backdrop-blur-sm border border-indigo-500/20 font-['figtree'] text-sm uppercase tracking-wide;
+  }
+
+  .btn-login {
+    @apply w-full btn-primary relative overflow-hidden group;
+  }
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+  .btn-login:hover::before {
+    left: 100%;
+  }
+
+  .btn-secondary {
+    @apply bg-white/80 hover:bg-white backdrop-blur-md text-slate-800 font-semibold py-2.5 px-5 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl border border-slate-200/50 dark:border-slate-600/50 dark:text-slate-200 dark:bg-slate-800/80 hover:dark:bg-slate-700/80 font-['figtree'];
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl active:scale-95 focus:ring-4 focus:ring-red-500/30 backdrop-blur-sm border border-red-500/20 font-['figtree'] text-sm uppercase tracking-wide;
+  }
+
+  .input-modern, .text-input {
+    @apply relative block w-full px-4 py-4 text-lg bg-white/60 backdrop-blur-sm border-0 border-b-2 border-slate-200 focus:border-indigo-500 rounded-none shadow-none focus:shadow-none transition-all duration-300 font-['figtree'] text-slate-800 dark:text-slate-200 dark:bg-slate-800/50 dark:border-slate-600 focus:dark:border-indigo-400 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0 peer;
+  }
+  .input-modern:focus ~ .floating-label,
+  .text-input:focus ~ label,
+  .input-modern:not(:placeholder-shown) ~ .floating-label {
+    @apply text-indigo-600 text-sm -top-3 left-0 px-2 bg-white/90 dark:bg-slate-900 backdrop-blur-sm rounded-full transition-all duration-300;
+  }
+
+  .floating-label {
+    @apply absolute left-4 top-4 text-slate-500 text-lg transition-all duration-300 cursor-text pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-4 font-['figtree'] dark:text-slate-400;
+  }
+
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold border;
+  }
+  .status-ok { @apply bg-green-100 text-green-800 border-green-200; }
+  .status-warning { @apply bg-yellow-100 text-yellow-800 border-yellow-200; }
+  .status-error { @apply bg-red-100 text-red-800 border-red-200; }
+
+  .metric-card {
+    @apply p-6 rounded-xl border bg-gradient-to-br from-white to-gray-50 shadow-lg;
+  }
+
+  .table-admin {
+    @apply w-full text-sm;
+  }
+  .table-admin th {
+    @apply px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-50 border-b;
+  }
+  .table-admin td {
+    @apply px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .backdrop-blur-md { backdrop-filter: blur(12px); }
+  
+  /* Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+  }
+  .glow-indigo {
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  /* Dashboard Enhancements */
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+  
+  .glass-card-hover {
+    @apply hover:shadow-2xl hover:scale-[1.02] hover:border-indigo-200;
+  }
+  
+  .metric-progress {
+    @apply transition-all duration-1000;
+  }
+  
+  .chart-sparkline {
+    @apply hover:scale-110 transition-all duration-200;
+  }
+  
+  .pulse-spike {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Error shake */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  .shake-error {
+    animation: shake 0.5s ease-in-out;
+  }
+}
+

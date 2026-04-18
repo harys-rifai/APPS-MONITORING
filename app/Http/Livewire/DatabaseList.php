@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Database;
-use App\Models\organisation;
+use App\Models\Organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,8 +12,9 @@ class DatabaseList extends Component
 {
     use WithPagination;
 
+    protected $listeners = ['refresh' => '$refresh'];
+
     public $showModal = false;
-    public $showViewModal = false;
     public $showDeleteModal = false;
     public $databaseId = null;
     public $server_id = null;
@@ -30,8 +31,8 @@ class DatabaseList extends Component
     public $idle_threshold = 100;
     public $lock_threshold = 10;
     public $is_active = true;
+    public $loading = false;
     public $search = '';
-    public $viewDatabase = null;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -48,41 +49,31 @@ class DatabaseList extends Component
         $user = Auth::user();
         $organisationId = $user ? $user->organisation_id : null;
         
-        $databases = Database::with('server')
-            ->whereRaw('is_active = true')
+        $databases = Database::with(['server', 'latestMetrics'])
             ->when($organisationId, function($query) use ($organisationId) {
                 return $query->where('organisation_id', $organisationId);
             })
             ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('host', 'like', '%' . $this->search . '%')
-                    ->orWhere('type', 'like', '%' . $this->search . '%');
+                    ->orWhere('type', 'like', '%' . $this->search . '%')
+                    ->orWhere('host', 'like', '%' . $this->search . '%');
             })
-            ->paginate(10);
+            ->orderBy('created_at', 'desc')
+->simplePaginate(10);
 
-        // Fetch real-time stats for each database
-        $connector = new \App\Services\DatabaseConnector();
+        // Get cached metrics for each database (avoid connecting to each DB on list view)
         foreach ($databases->items() as $db) {
-            try {
-                $config = [
-                    'type' => $db->type,
-                    'host' => $db->host,
-                    'port' => $db->port,
-                    'database' => $db->database,
-                    'username' => $db->username,
-                    'password' => $db->password,
-                ];
-                
-                $stats = $connector->getDatabaseStats($config);
-                $db->realtime_stats = $stats;
-                $db->is_reachable = true;
-            } catch (\Exception $e) {
+            // Use latest stored metrics instead of live connections
+            if ($db->latestMetrics) {
                 $db->realtime_stats = [
-                    'active' => 0,
-                    'idle' => 0,
-                    'locked' => 0,
-                    'total' => 0
+                    'active' => $db->latestMetrics->active_connections ?? 0,
+                    'idle' => $db->latestMetrics->idle_connections ?? 0,
+                    'locked' => $db->latestMetrics->locked_connections ?? 0,
+                    'total' => ($db->latestMetrics->active_connections ?? 0) + ($db->latestMetrics->idle_connections ?? 0)
                 ];
+                $db->is_reachable = true;
+            } else {
+                $db->realtime_stats = ['active' => 0, 'idle' => 0, 'locked' => 0, 'total' => 0];
                 $db->is_reachable = false;
             }
         }
@@ -93,7 +84,11 @@ class DatabaseList extends Component
     public function openModal($id = null)
     {
         if ($id) {
-            $db = Database::whereRaw('is_active = true')->find($id);
+            $db = Database::find($id);
+            if (!$db) {
+                session()->flash('error', 'Database not found!');
+                return;
+            }
             $this->databaseId = $db->id;
             $this->server_id = $db->server_id;
             $this->organisation_id = $db->organisation_id;
@@ -113,42 +108,14 @@ class DatabaseList extends Component
             $this->resetFields();
         }
         $this->showModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetFields();
-    }
-
-    public function viewDatabase($id)
-    {
-        $db = Database::with('server')->whereRaw('is_active = true')->find($id);
-        if ($db) {
-            try {
-                $connector = new \App\Services\DatabaseConnector();
-                $db->realtime_stats = $connector->getDatabaseStats([
-                    'type' => $db->type,
-                    'host' => $db->host,
-                    'port' => $db->port,
-                    'database' => $db->database,
-                    'username' => $db->username,
-                    'password' => $db->password,
-                ]);
-                $db->is_reachable = true;
-            } catch (\Exception $e) {
-                $db->realtime_stats = ['active' => 0, 'idle' => 0, 'locked' => 0];
-                $db->is_reachable = false;
-            }
-            $this->viewDatabase = $db;
-            $this->showViewModal = true;
-        }
-    }
-
-    public function closeViewModal()
-    {
-        $this->showViewModal = false;
-        $this->viewDatabase = null;
+        $this->dispatch('modalClosed');
     }
 
     public function resetFields()
@@ -172,66 +139,74 @@ class DatabaseList extends Component
 
     public function save()
     {
-        $this->validate();
-        
-        $connectionName = $this->connection_name ?: 'db_' . time();
+        $this->loading = true;
+        try {
+            $this->validate();
+            
+            $connectionName = $this->connection_name ?: 'db_' . time();
 
-        if ($this->databaseId) {
-            Database::find($this->databaseId)->update([
-                'server_id' => $this->server_id,
-                'name' => $this->name,
-                'type' => $this->type,
-                'connection_name' => $connectionName,
-                'host' => $this->host,
-                'port' => $this->port,
-                'username' => $this->username,
-                'password' => $this->password,
-                'database' => $this->database,
-                'active_threshold' => $this->active_threshold,
-                'idle_threshold' => $this->idle_threshold,
-                'lock_threshold' => $this->lock_threshold,
-                'is_active' => $this->is_active,
-                'organisation_id' => $this->organisation_id,
-            ]);
-        } else {
-            Database::create([
-                'server_id' => $this->server_id,
-                'name' => $this->name,
-                'type' => $this->type,
-                'connection_name' => $connectionName,
-                'host' => $this->host,
-                'port' => $this->port,
-                'username' => $this->username,
-                'password' => $this->password,
-                'database' => $this->database,
-                'active_threshold' => $this->active_threshold,
-                'idle_threshold' => $this->idle_threshold,
-                'lock_threshold' => $this->lock_threshold,
-                'is_active' => $this->is_active,
-                'organisation_id' => $this->organisation_id,
-            ]);
+            if ($this->databaseId) {
+                Database::find($this->databaseId)->update([
+                    'server_id' => $this->server_id,
+                    'name' => $this->name,
+                    'type' => $this->type,
+                    'connection_name' => $connectionName,
+                    'host' => $this->host,
+                    'port' => $this->port,
+                    'username' => $this->username,
+                    'password' => $this->password,
+                    'database' => $this->database,
+                    'active_threshold' => $this->active_threshold,
+                    'idle_threshold' => $this->idle_threshold,
+                    'lock_threshold' => $this->lock_threshold,
+                    'is_active' => $this->is_active,
+                    'organisation_id' => $this->organisation_id,
+                ]);
+            } else {
+                Database::create([
+                    'server_id' => $this->server_id,
+                    'name' => $this->name,
+                    'type' => $this->type,
+                    'connection_name' => $connectionName,
+                    'host' => $this->host,
+                    'port' => $this->port,
+                    'username' => $this->username,
+                    'password' => $this->password,
+                    'database' => $this->database,
+                    'active_threshold' => $this->active_threshold,
+                    'idle_threshold' => $this->idle_threshold,
+                    'lock_threshold' => $this->lock_threshold,
+                    'is_active' => $this->is_active,
+                    'organisation_id' => $this->organisation_id,
+                ]);
+            }
+
+            $this->closeModal();
+            session()->flash('message', 'Database saved successfully!');
+        } finally {
+            $this->loading = false;
         }
-
-        $this->closeModal();
-        session()->flash('message', 'Database saved successfully!');
     }
 
     public function delete($id)
     {
         Database::find($id)->delete();
         session()->flash('message', 'Database deleted successfully!');
+        $this->dispatch('refresh');
     }
 
     public function confirmDelete($id)
     {
         $this->databaseId = $id;
         $this->showDeleteModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function cancelDelete()
     {
         $this->databaseId = null;
         $this->showDeleteModal = false;
+        $this->dispatch('modalClosed');
     }
 
     public function executeDelete()
@@ -239,6 +214,7 @@ class DatabaseList extends Component
         if ($this->databaseId) {
             Database::find($this->databaseId)->delete();
             session()->flash('message', 'Database deleted successfully!');
+            $this->dispatch('refresh');
         }
         $this->cancelDelete();
     }

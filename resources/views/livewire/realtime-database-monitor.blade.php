@@ -89,34 +89,34 @@
                 <div class="p-5">
                     @if(count($connections) > 0)
                     <div class="overflow-x-auto">
-                        <table class="w-full">
+<table class="w-full table-auto min-w-[800px]">
                             <thead>
-                                <tr class="text-left text-sm text-gray-500 border-b border-gray-200">
-                                    <th class="pb-2 font-medium">PID</th>
-                                    <th class="pb-2 font-medium">User</th>
-                                    <th class="pb-2 font-medium">App</th>
-                                    <th class="pb-2 font-medium">Client IP</th>
-                                    <th class="pb-2 font-medium">State</th>
-                                    <th class="pb-2 font-medium">Query</th>
-                                    <th class="pb-2 font-medium">Duration</th>
+                                <tr class="text-left text-xs uppercase text-gray-500 border-b border-gray-200 font-semibold tracking-wider">
+                                    <th class="pb-1.5 px-3">PID</th>
+                                    <th class="pb-1.5 px-3">User</th>
+                                    <th class="pb-1.5 px-3">App</th>
+                                    <th class="pb-1.5 px-3">Client IP</th>
+                                    <th class="pb-1.5 px-3 text-center">State</th>
+                                    <th class="pb-1.5 px-3">Query</th>
+                                    <th class="pb-1.5 px-3 text-right">Duration</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($this->getPaginatedConnections() as $conn)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="py-2 text-sm text-gray-600">{{ $conn['pid'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $conn['username'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $conn['application_name'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $conn['client_ip'] }}</td>
-                                    <td class="py-2">
-                                        <span class="px-2 py-1 rounded text-xs font-medium 
+                                    <td class="py-1.5 px-3 text-xs text-gray-600">{{ $conn['pid'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 truncate">{{ $conn['username'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 truncate max-w-[100px]">{{ $conn['application_name'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 truncate">{{ $conn['client_ip'] }}</td>
+                                    <td class="py-1.5 px-3 text-center">
+                                        <span class="px-1.5 py-0.5 rounded text-xs font-medium 
                                             {{ $conn['state'] === 'active' ? 'bg-green-100 text-green-700' : 
                                             ($conn['state'] === 'idle' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
                                             {{ $conn['state'] }}
                                         </span>
                                     </td>
-                                    <td class="py-2 text-sm text-gray-600 max-w-xs truncate" title="{{ $conn['query'] }}">{{ $conn['query'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $conn['duration'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 max-w-[200px] truncate" title="{{ $conn['query'] }}">{{ $conn['query'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 text-right">{{ $conn['duration'] }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -154,24 +154,24 @@
                 <div class="p-5">
                     @if(count($tables) > 0)
                     <div class="overflow-x-auto">
-                        <table class="w-full">
+<table class="w-full table-auto min-w-[700px]">
                             <thead>
-                                <tr class="text-left text-sm text-gray-500 border-b border-gray-200">
-                                    <th class="pb-2 font-medium">#</th>
-                                    <th class="pb-2 font-medium">Table</th>
-                                    <th class="pb-2 font-medium">Table Size</th>
-                                    <th class="pb-2 font-medium">Index Size</th>
-                                    <th class="pb-2 font-medium">Total Size</th>
+                                <tr class="text-left text-xs uppercase text-gray-500 border-b border-gray-200 font-semibold tracking-wider">
+                                    <th class="pb-1.5 px-3">#</th>
+                                    <th class="pb-1.5 px-3">Table</th>
+                                    <th class="pb-1.5 px-3">Table Size</th>
+                                    <th class="pb-1.5 px-3">Index Size</th>
+                                    <th class="pb-1.5 px-3 text-right">Total Size</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($this->getPaginatedTables() as $table)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="py-2 text-sm text-gray-600">{{ $table['n'] }}</td>
-                                    <td class="py-2 text-sm text-gray-800 font-medium">{{ $table['name'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $table['table_size'] ?? '-' }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $table['index_size'] ?? '-' }}</td>
-                                    <td class="py-2 text-sm text-gray-800 font-medium">{{ $table['total_size'] ?? '-' }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600">{{ $table['n'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs font-medium text-gray-800 truncate">{{ $table['name'] }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 truncate">{{ $table['table_size'] ?? '-' }}</td>
+                                    <td class="py-1.5 px-3 text-xs text-gray-600 truncate">{{ $table['index_size'] ?? '-' }}</td>
+                                    <td class="py-1.5 px-3 text-xs font-medium text-gray-800 text-right">{{ $table['total_size'] ?? '-' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

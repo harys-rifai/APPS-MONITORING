@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Organisation;
 use App\Models\Server;
-use App\Models\organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -13,23 +13,41 @@ class ServerList extends Component
     use WithPagination;
 
     public $showModal = false;
+
     public $showViewModal = false;
+
     public $showDeleteModal = false;
+
     public $serverId = null;
+
     public $name = '';
+
     public $hostname = '';
+
     public $ip = '';
+
     public $os = 'linux';
+
     public $type = 'server';
+
     public $cpu_threshold = 80;
+
     public $ram_threshold = 80;
+
     public $disk_threshold = 80;
+
     public $network_threshold = 100;
+
     public $location = '';
+
     public $api_token = '';
+
     public $is_active = true;
+
     public $search = '';
+
     public $viewServer = null;
+    public $loading = false;
     public $organisation_id = null;
     public $organisations = [];
 
@@ -47,32 +65,38 @@ class ServerList extends Component
 
     public function mount()
     {
-        $this->organisations = organisation::where('is_active', true)->get();
+        $this->organisations = Organisation::where('is_active', true)->get();
     }
 
     public function render()
     {
         $user = Auth::user();
         $organisationId = $user ? $user->organisation_id : null;
-        
-        $servers = Server::whereRaw('is_active = true')
-            ->when($organisationId, function($query) use ($organisationId) {
+
+        $servers = Server::when($organisationId, function ($query) use ($organisationId) {
                 return $query->where('organisation_id', $organisationId);
             })
-            ->where(function($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('hostname', 'like', '%' . $this->search . '%')
-                    ->orWhere('ip', 'like', '%' . $this->search . '%');
+            ->where(function ($query) {
+                $query->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('hostname', 'like', '%'.$this->search.'%')
+                    ->orWhere('ip', 'like', '%'.$this->search.'%');
             })
-            ->paginate(10);
+            ->orderBy('created_at', 'desc')
+->simplePaginate(10);
+
         return view('livewire.server-list', compact('servers'));
     }
 
     public function openModal($id = null)
     {
         if ($id) {
-            $server = Server::whereRaw('is_active = true')->find($id);
+            $server = Server::find($id);
+            if (!$server) {
+                session()->flash('error', 'Server not found!');
+                return;
+            }
             $this->serverId = $server->id;
+            $this->organisation_id = $server->organisation_id;
             $this->name = $server->name;
             $this->hostname = $server->hostname;
             $this->ip = $server->ip;
@@ -85,32 +109,37 @@ class ServerList extends Component
             $this->location = $server->location ?? '';
             $this->api_token = $server->api_token ?? '';
             $this->is_active = $server->is_active;
-            $this->organisation_id = $server->organisation_id;
         } else {
             $this->resetFields();
         }
         $this->showModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetFields();
+        $this->dispatch('modalClosed');
     }
 
     public function viewServer($id)
     {
-        $server = Server::whereRaw('is_active = true')->find($id);
-        if ($server) {
-            $this->viewServer = $server;
-            $this->showViewModal = true;
+        $server = Server::find($id);
+        if (!$server) {
+            session()->flash('error', 'Server not found!');
+            return;
         }
+        $this->viewServer = $server;
+        $this->showViewModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function closeViewModal()
     {
         $this->showViewModal = false;
         $this->viewServer = null;
+        $this->dispatch('modalClosed');
     }
 
     public function resetFields()
@@ -133,44 +162,49 @@ class ServerList extends Component
 
     public function save()
     {
-        $this->validate();
-        
-        if ($this->serverId) {
-            Server::find($this->serverId)->update([
-                'name' => $this->name,
-                'hostname' => $this->hostname,
-                'ip' => $this->ip,
-                'os' => $this->os,
-                'type' => $this->type,
-                'cpu_threshold' => $this->cpu_threshold,
-                'ram_threshold' => $this->ram_threshold,
-                'disk_threshold' => $this->disk_threshold,
-                'network_threshold' => $this->network_threshold,
-                'location' => $this->location,
-                'api_token' => $this->api_token,
-                'is_active' => $this->is_active,
-                'organisation_id' => $this->organisation_id,
-            ]);
-        } else {
-            Server::create([
-                'name' => $this->name,
-                'hostname' => $this->hostname,
-                'ip' => $this->ip,
-                'os' => $this->os,
-                'type' => $this->type,
-                'cpu_threshold' => $this->cpu_threshold,
-                'ram_threshold' => $this->ram_threshold,
-                'disk_threshold' => $this->disk_threshold,
-                'network_threshold' => $this->network_threshold,
-                'location' => $this->location,
-                'api_token' => $this->api_token,
-                'is_active' => $this->is_active,
-                'organisation_id' => $this->organisation_id,
-            ]);
-        }
+        $this->loading = true;
+        try {
+            $this->validate();
 
-        $this->closeModal();
-        session()->flash('message', 'Server saved successfully!');
+            if ($this->serverId) {
+                Server::find($this->serverId)->update([
+                    'name' => $this->name,
+                    'hostname' => $this->hostname,
+                    'ip' => $this->ip,
+                    'os' => $this->os,
+                    'type' => $this->type,
+                    'cpu_threshold' => $this->cpu_threshold,
+                    'ram_threshold' => $this->ram_threshold,
+                    'disk_threshold' => $this->disk_threshold,
+                    'network_threshold' => $this->network_threshold,
+                    'location' => $this->location,
+                    'api_token' => $this->api_token,
+                    'is_active' => $this->is_active,
+                    'organisation_id' => $this->organisation_id,
+                ]);
+            } else {
+                Server::create([
+                    'name' => $this->name,
+                    'hostname' => $this->hostname,
+                    'ip' => $this->ip,
+                    'os' => $this->os,
+                    'type' => $this->type,
+                    'cpu_threshold' => $this->cpu_threshold,
+                    'ram_threshold' => $this->ram_threshold,
+                    'disk_threshold' => $this->disk_threshold,
+                    'network_threshold' => $this->network_threshold,
+                    'location' => $this->location,
+                    'api_token' => $this->api_token,
+                    'is_active' => $this->is_active,
+                    'organisation_id' => $this->organisation_id,
+                ]);
+            }
+
+            $this->closeModal();
+            session()->flash('message', 'Server saved successfully!');
+        } finally {
+            $this->loading = false;
+        }
     }
 
     public function delete($id)
@@ -183,15 +217,17 @@ class ServerList extends Component
     {
         $this->serverId = $id;
         $this->showDeleteModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function cancelDelete()
     {
         $this->serverId = null;
         $this->showDeleteModal = false;
+        $this->dispatch('modalClosed');
     }
 
-public function executeDelete()
+    public function executeDelete()
     {
         if ($this->serverId) {
             Server::find($this->serverId)->delete();
@@ -203,17 +239,19 @@ public function executeDelete()
     public function pingServer($id)
     {
         $server = Server::find($id);
-        if (!$server) return;
+        if (! $server) {
+            return;
+        }
 
         $host = $server->ip;
-        
+
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $command = "ping -n 1 -w 1000 " . escapeshellarg($host);
+            $command = 'ping -n 1 -w 1000 '.escapeshellarg($host);
             $output = shell_exec($command);
             $success = stripos($output, 'Reply from') !== false || stripos($output, 'TTL=') !== false;
         } else {
-            $command = "ping -c 1 -W 1 " . escapeshellarg($host);
-            $output = shell_exec($command . " 2>&1");
+            $command = 'ping -c 1 -W 1 '.escapeshellarg($host);
+            $output = shell_exec($command.' 2>&1');
             $success = stripos($output, '1 packets transmitted, 1 received') !== false || stripos($output, '64 bytes from') !== false;
         }
 

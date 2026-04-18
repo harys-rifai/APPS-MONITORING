@@ -10,6 +10,8 @@ class AuditLogList extends Component
 {
     use WithPagination;
 
+    public $showViewModal = false;
+    public $selectedLog = null;
     public $search = '';
     public $entityType = '';
     public $action = '';
@@ -29,12 +31,31 @@ class AuditLogList extends Component
             ->when($this->dateTo, fn($q) => $q->where('created_at', '<=', $this->dateTo . ' 23:59:59'));
 
         return view('livewire.audit-log-list', [
-            'logs' => $query->orderBy('created_at', 'desc')->paginate(20),
+            'logs' => $query->orderBy('created_at', 'desc')->simplePaginate(10),
         ]);
     }
 
     public function resetFilters()
     {
         $this->reset(['search', 'entityType', 'action', 'dateFrom', 'dateTo']);
+    }
+
+    public function viewLog($id)
+    {
+        $log = AuditLog::with('user')->find($id);
+        if (!$log) {
+            session()->flash('error', 'Log not found!');
+            return;
+        }
+        $this->selectedLog = $log;
+        $this->showViewModal = true;
+        $this->dispatch('modalOpened');
+    }
+
+    public function closeViewModal()
+    {
+        $this->showViewModal = false;
+        $this->selectedLog = null;
+        $this->dispatch('modalClosed');
     }
 }

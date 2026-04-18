@@ -84,7 +84,9 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased">
+<body class="font-sans antialiased overflow-hidden">
+
+@stack('modals')
         <div class="flex min-h-screen">
             <nav id="sidebar" class="flex flex-col bg-white border-r border-gray-200 transition-all duration-300" style="width: 4rem;">
                 <div class="h-16 flex items-center justify-center border-b border-gray-200" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
@@ -192,11 +194,7 @@
                             @yield('title', 'Dashboard')
                         </h1>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div id="time-display" class="text-[11px] font-bold text-indigo-600 uppercase tracking-wide bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100 tabular-nums"></div>
-                        <div class="border-l border-gray-200 h-6 mx-1"></div>
-                        <div id="date-display" class="text-[11px] font-bold text-gray-500 uppercase tracking-wide"></div>
-                    </div>
+
                 </header>
 
                 <main id="main-content" class="flex-1 p-6">
@@ -208,6 +206,19 @@
         </div>
 
         @livewireScripts
+        <script>
+        document.addEventListener('livewire:navigated', () => {
+            document.body.classList.remove('overflow-hidden');
+        });
+
+        Livewire.on('modalOpened', () => {
+            document.body.classList.add('overflow-hidden');
+        });
+
+        Livewire.on('modalClosed', () => {
+            document.body.classList.remove('overflow-hidden');
+        });
+        </script>
         <script>
             function toggleSidebar() {
                 const sidebar = document.getElementById('sidebar');
@@ -237,29 +248,7 @@
             function closeViewModal() {
                 document.getElementById('viewModalOverlay').classList.add('hidden');
             }
-            function updateClock() {
-                const now = new Date();
-                
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                const ms = String(now.getMilliseconds()).padStart(3, '0');
-                
-                const timeDisplay = document.getElementById('time-display');
-                if (timeDisplay) {
-                    timeDisplay.textContent = `TIME : ${hours}:${minutes}:${seconds}.${ms} WIB`;
-                }
-                
-                const dateDisplay = document.getElementById('date-display');
-                if (dateDisplay) {
-                    const locale = document.documentElement.lang === 'id' ? 'id-ID' : 'en-GB';
-                    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-                    dateDisplay.textContent = now.toLocaleDateString(locale, options);
-                }
-                
-                requestAnimationFrame(updateClock);
-            }
-            updateClock();
+
         </script>
 
         <div id="viewModalOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" style="display: none;">

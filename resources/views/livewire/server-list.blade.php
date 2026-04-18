@@ -1,80 +1,75 @@
 @section('title', 'Servers')
 <div class="glass-card">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-center mb-6 p-6 pb-0">
-            <div>
-                <p class="text-gray-500">Configure and manage monitored servers</p>
-            </div>
-            <div>
-                <button wire:click="openModal()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg flex items-center gap-2 text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Server Management</h2>
+                <button wire:click="openModal()" class="bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-sm font-medium text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     Add Server
                 </button>
             </div>
-        </div>
 
-        <div class="p-6 pt-0">
+            @if(session()->has('message'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('message') }}
+                </div>
+            @endif
+
             <div class="mb-4">
-                <div class="relative">
+                <div class="relative max-w-md">
                     <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search servers..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search servers..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div class="p-5">
-                @if(session()->has('message'))
-                    <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4">
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                <table class="w-full">
+            <div class="overflow-x-auto">
+<table class="w-full table-auto min-w-[700px]">
                     <thead>
-                        <tr class="text-left text-sm text-gray-500 border-b border-gray-200">
-                            <th class="pb-3 font-medium">Name</th>
-                            <th class="pb-3 font-medium">IP</th>
-                            <th class="pb-3 font-medium">OS</th>
-                            <th class="pb-3 font-medium">CPU</th>
-                            <th class="pb-3 font-medium">RAM</th>
-                            <th class="pb-3 font-medium">Ping</th>
-                            <th class="pb-3 font-medium">Status</th>
-                            <th class="pb-3 font-medium">Actions</th>
+                        <tr class="text-left text-xs uppercase text-gray-500 border-b border-gray-200 font-semibold tracking-wider">
+                            <th class="pb-2 px-3">Name</th>
+                            <th class="pb-2 px-3">IP</th>
+                            <th class="pb-2 px-3">OS</th>
+                            <th class="pb-2 px-3 text-center">CPU</th>
+                            <th class="pb-2 px-3 text-center">RAM</th>
+                            <th class="pb-2 px-3 text-center">Ping</th>
+                            <th class="pb-2 px-3 text-center">Status</th>
+                            <th class="pb-2 px-3 text-right">Actions</th>
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-gray-100">
                         @foreach($servers as $server)
                             <tr class="hover:bg-gray-50">
-                                <td class="py-3">
+                                <td class="py-2 px-3">
                                     <div>
-                                        <p class="font-medium text-gray-800">{{ $server->name }}</p>
-                                        <p class="text-sm text-gray-500">{{ $server->hostname }}</p>
+                                        <p class="text-xs font-medium text-gray-800 truncate">{{ $server->name }}</p>
+                                        <p class="text-xs text-gray-500 truncate">{{ $server->hostname }}</p>
                                     </div>
                                 </td>
-                                <td class="py-3 text-gray-600">{{ $server->ip }}</td>
-                                <td class="py-3">
-                                    <span class="px-2 py-1 rounded text-xs bg-gray-100 text-gray-600 uppercase">{{ $server->os }}</span>
+                                <td class="py-2 px-3 text-xs text-gray-600 truncate">{{ $server->ip }}</td>
+                                <td class="py-2 px-3">
+                                    <span class="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-600 uppercase">{{ $server->os }}</span>
                                 </td>
-                                <td class="py-3 text-gray-600">{{ $server->cpu_threshold }}%</td>
-                                <td class="py-3 text-gray-600">{{ $server->ram_threshold }}%</td>
-<td class="py-3">
-                                    <span class="px-2 py-1 rounded text-xs font-medium {{ $server->ping_status === 'ok' ? 'bg-green-100 text-green-700' : ($server->ping_status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500') }}">
+                                <td class="py-2 px-3 text-center text-xs text-gray-600">{{ $server->cpu_threshold }}%</td>
+                                <td class="py-2 px-3 text-center text-xs text-gray-600">{{ $server->ram_threshold }}%</td>
+<td class="py-2 px-3 text-center">
+                                    <span class="px-1.5 py-0.5 rounded text-xs font-medium {{ $server->ping_status === 'ok' ? 'bg-green-100 text-green-700' : ($server->ping_status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500') }}">
                                         {{ $server->ping_status ? ucfirst($server->ping_status) : 'N/A' }}
                                     </span>
                                 </td>
-                                <td class="py-3">
-                                    <span class="px-2 py-1 rounded text-xs font-medium {{ $server->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                <td class="py-2 px-3 text-center">
+                                    <span class="px-1.5 py-0.5 rounded text-xs font-medium {{ $server->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                         {{ $server->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
-                                <td class="py-3">
-                                    <div class="flex gap-2">
-                                        <button wire:click="pingServer({{ $server->id }})" class="text-green-600 hover:text-green-800" title="Ping">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <td class="py-3 px-3 text-right">
+                                    <div class="flex gap-1 justify-end items-center">
+                                        <button wire:click="pingServer({{ $server->id }})" class="text-green-600 hover:text-green-800 p-0.5 rounded-sm hover:bg-green-100" title="Ping">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                             </svg>
                                         </button>
@@ -93,19 +88,19 @@
                                                 'status' => $server->is_active ? 'Active' : 'Inactive'
                                             ];
                                         @endphp
-                                        <button wire:click="viewServer({{ $server->id }})" class="text-indigo-600 hover:text-indigo-800" title="View">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button wire:click="viewServer({{ $server->id }})" class="text-indigo-600 hover:text-indigo-800 p-0.5 rounded-sm hover:bg-indigo-100" title="View">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </button>
-                                        <button wire:click="openModal({{ $server->id }})" class="text-blue-600 hover:text-blue-800" title="Edit">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button wire:click="openModal({{ $server->id }})" class="text-blue-600 hover:text-blue-800 p-0.5 rounded-sm hover:bg-blue-100" title="Edit">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
                                         </button>
-                                        <button wire:click="confirmDelete({{ $server->id }})" class="text-red-600 hover:text-red-800" title="Delete">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button wire:click="confirmDelete({{ $server->id }})" class="text-red-600 hover:text-red-800 p-0.5 rounded-sm hover:bg-red-100" title="Delete">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
                                         </button>
@@ -117,13 +112,19 @@
                 </table>
 
                 <div class="mt-4">
-                    {{ $servers->links() }}
+<x-tailwind-pagination :links="$servers" />
                 </div>
             </div>
         </div>
 
-        @if($showModal)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16" x-data="{ loading: false }">
+@if($showModal)
+            <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" x-data="{ loading: false }">
                 <div class="fixed inset-0" wire:click="closeModal"></div>
                 <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
                     <div class="flex items-center justify-between mb-3">
@@ -141,7 +142,7 @@
                             </svg>
                         </button>
                     </div>
-                    <form wire:submit.prevent="save" @submit="loading = true">
+                    <form wire:submit.prevent="save" wire:loading.attr="disabled">
                         <div class="space-y-3">
                             <div>
                                 <label class="block text-xs text-gray-600 mb-1">organisation</label>
@@ -218,14 +219,15 @@
                             </div>
                         </div>
                         <div class="flex justify-end gap-2 mt-3">
-                            <button type="button" wire:click="closeModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700" :disabled="loading">Cancel</button>
-                            <button type="submit" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm text-white flex items-center gap-1" :disabled="loading">
-                                <svg wire:loading class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24">
+                            <button type="button" wire:click="closeModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700" wire:loading.attr="disabled">Cancel</button>
+                            <button type="submit" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm text-white flex items-center gap-1" wire:loading.attr="disabled">
+                                <div wire:loading wire:target="save" class="animate-spin h-3 w-3 text-white mr-1" fill="none">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 6.627 12 14s6.627 14 14 14v-4a8 8 0 01-8 8H4z"></path>
-                                </svg>
-                                <span x-show="!loading">Save</span>
-                                <span x-show="loading">...</span>
+                                </div>
+                                <span wire:loading.remove wire:target="save">...</span>
+                                <span wire:loading.delay.remove>Saving...</span>
+                                <span wire:loading.delay.remove wire:target="save">Save</span>
                             </button>
                         </div>
                     </form>
@@ -233,8 +235,14 @@
             </div>
         @endif
 
-        @if($showViewModal && $viewServer)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16">
+@if($showViewModal && $viewServer)
+            <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
+                 x-transition:enter-start="opacity-0 scale-95" 
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200" 
+                 x-transition:leave-start="opacity-100 scale-100" 
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div class="fixed inset-0" wire:click="closeViewModal"></div>
                 <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
                     <div class="flex justify-between items-center mb-3">
@@ -305,8 +313,14 @@
             </div>
         @endif
 
-        @if($showDeleteModal)
-            <div class="fixed inset-0 flex items-start justify-center z-50 pt-16">
+@if($showDeleteModal)
+            <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div class="fixed inset-0 bg-black/30" wire:click="cancelDelete"></div>
                 <div class="bg-white rounded-xl p-4 w-full max-w-sm border border-gray-200 shadow-lg relative z-10">
                     <div class="text-center">

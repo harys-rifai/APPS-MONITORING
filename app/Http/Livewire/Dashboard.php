@@ -46,7 +46,6 @@ class Dashboard extends Component
         $organisationId = $user ? $user->organisation_id : null;
 
         $this->servers = Server::with('latestMetrics')
-            ->whereRaw('is_active = true')
             ->when($organisationId, function($query) use ($organisationId) {
                 return $query->where('organisation_id', $organisationId);
             })
@@ -62,7 +61,6 @@ class Dashboard extends Component
             ->toArray();
 
         $this->databases = Database::with('latestMetrics')
-            ->whereRaw('is_active = true')
             ->when($organisationId, function($query) use ($organisationId) {
                 return $query->where('organisation_id', $organisationId);
             })
@@ -88,12 +86,10 @@ class Dashboard extends Component
             ->toArray();
 
         $this->stats = [
-            'total_servers' => Server::whereRaw('is_active = true')
-                ->when($organisationId, function($query) use ($organisationId) {
+            'total_servers' => Server::when($organisationId, function($query) use ($organisationId) {
                     return $query->where('organisation_id', $organisationId);
                 })->count(),
-            'total_databases' => Database::whereRaw('is_active = true')
-                ->when($organisationId, function($query) use ($organisationId) {
+            'total_databases' => Database::when($organisationId, function($query) use ($organisationId) {
                     return $query->where('organisation_id', $organisationId);
                 })->count(),
             'spike_servers' => Server::where('status', 'spike')

@@ -3,10 +3,11 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use App\Models\organisation;
+use App\Models\Organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Cache;
 
 class UserList extends Component
 {
@@ -23,7 +24,8 @@ class UserList extends Component
     public $is_active = true;
     public $search = '';
     public $viewUser = null;
-    public $organisations = [];
+    public $loading = false;
+    public $organisations = []; 
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -34,7 +36,7 @@ class UserList extends Component
 
     public function mount()
     {
-        $this->organisations = organisation::where('is_active', true)->get();
+$this->organisations = Cache::remember('active_orgs', 3600, fn () => Organisation::where('is_active', true)->get()->toArray());
     }
 
     public function render()
@@ -50,7 +52,8 @@ class UserList extends Component
                 $query->where('name', 'like', '%' . $this->search . '%')
                     ->orWhere('email', 'like', '%' . $this->search . '%');
             })
-            ->paginate(10);
+            ->orderBy('created_at', 'desc')
+->simplePaginate(10);
         
         return view('livewire.user-list', compact('users'));
     }
@@ -59,6 +62,10 @@ class UserList extends Component
     {
         if ($id) {
             $user = User::find($id);
+            if (!$user) {
+                session()->flash('error', 'User not found!');
+                return;
+            }
             $this->userId = $user->id;
             $this->name = $user->name;
             $this->email = $user->email;
@@ -68,27 +75,33 @@ class UserList extends Component
             $this->resetFields();
         }
         $this->showModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetFields();
+        $this->dispatch('modalClosed');
     }
 
     public function viewUser($id)
     {
         $user = User::with('organisation')->find($id);
-        if ($user) {
-            $this->viewUser = $user;
-            $this->showViewModal = true;
+        if (!$user) {
+            session()->flash('error', 'User not found!');
+            return;
         }
+        $this->viewUser = $user;
+        $this->showViewModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function closeViewModal()
     {
         $this->showViewModal = false;
         $this->viewUser = null;
+        $this->dispatch('modalClosed');
     }
 
     public function resetFields()
@@ -103,36 +116,41 @@ class UserList extends Component
 
     public function save()
     {
-        if ($this->userId) {
-            $this->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $this->userId,
-                'password' => 'nullable|string|min:8',
-                'organisation_id' => 'required',
-            ]);
-        } else {
-            $this->validate();
+        $this->loading = true;
+        try {
+            if ($this->userId) {
+                $this->validate([
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|email|unique:users,email,' . $this->userId,
+                    'password' => 'nullable|string|min:8',
+                    'organisation_id' => 'required',
+                ]);
+            } else {
+                $this->validate();
+            }
+
+            $data = [
+                'name' => $this->name,
+                'email' => $this->email,
+                'organisation_id' => $this->organisation_id,
+                'is_active' => $this->is_active,
+            ];
+
+            if ($this->password) {
+                $data['password'] = $this->password;
+            }
+
+            if ($this->userId) {
+                User::find($this->userId)->update($data);
+            } else {
+                User::create($data);
+            }
+
+            $this->closeModal();
+            session()->flash('message', 'User saved successfully!');
+        } finally {
+            $this->loading = false;
         }
-
-        $data = [
-            'name' => $this->name,
-            'email' => $this->email,
-            'organisation_id' => $this->organisation_id,
-            'is_active' => $this->is_active,
-        ];
-
-        if ($this->password) {
-            $data['password'] = $this->password;
-        }
-
-        if ($this->userId) {
-            User::find($this->userId)->update($data);
-        } else {
-            User::create($data);
-        }
-
-        $this->closeModal();
-        session()->flash('message', 'User saved successfully!');
     }
 
     public function delete($id)
@@ -145,12 +163,14 @@ class UserList extends Component
     {
         $this->userId = $id;
         $this->showDeleteModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function cancelDelete()
     {
         $this->userId = null;
         $this->showDeleteModal = false;
+        $this->dispatch('modalClosed');
     }
 
     public function executeDelete()
