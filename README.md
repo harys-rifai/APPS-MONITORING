@@ -4,6 +4,8 @@ Advanced Server and Database Monitoring System with Multi-Tenant Architecture, R
 
 ## 🚀 Key Features
 
+![Dashboard Screenshot](Screenshot 2026-04-18 164458.png)
+
 ### 1. Multi-Tenant Architecture
 - **Hierarchical Structure**: Organisation → Branch → Team.
 - **Data Isolation**: Automatic data filtering using Eloquent `TenantScope`.
@@ -82,10 +84,11 @@ php artisan serve
 
 ## 📈 Application Versioning
 The system tracks updates in the `app_versions` table. The current version is displayed at the bottom of the left sidebar.
-- **v.1.1.1**: Idempotent Seeding & Auto-installation setup.
-- **v.1.1.0**: Multi-Database Monitoring (Postgres, MSSQL, MySQL, Oracle), Real-time stats, Detailed Table Metrics.
-- **v.1.0.1**: UI Refinements, Clock/Timezone fixes.
-- **v.1.0.0**: Initial Multi-tenant Rebuild.
+- **v1.0.2**: Add scheduled ping job every 15 minutes.
+- **v1.0.1**: Add ping OK/Failed status to servers.
+- **v1.1.1**: Idempotent Seeding & Auto-installation setup.
+- **v1.1.0**: Multi-Database Monitoring (Postgres, MSSQL, MySQL, Oracle), Real-time stats, Detailed Table Metrics.
+- **v1.0.0**: Initial Multi-tenant Rebuild.
 
 ## 📝 License
 MIT License

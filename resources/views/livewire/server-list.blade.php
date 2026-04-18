@@ -41,6 +41,7 @@
                             <th class="pb-3 font-medium">OS</th>
                             <th class="pb-3 font-medium">CPU</th>
                             <th class="pb-3 font-medium">RAM</th>
+                            <th class="pb-3 font-medium">Ping</th>
                             <th class="pb-3 font-medium">Status</th>
                             <th class="pb-3 font-medium">Actions</th>
                         </tr>
@@ -60,6 +61,11 @@
                                 </td>
                                 <td class="py-3 text-gray-600">{{ $server->cpu_threshold }}%</td>
                                 <td class="py-3 text-gray-600">{{ $server->ram_threshold }}%</td>
+<td class="py-3">
+                                    <span class="px-2 py-1 rounded text-xs font-medium {{ $server->ping_status === 'ok' ? 'bg-green-100 text-green-700' : ($server->ping_status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500') }}">
+                                        {{ $server->ping_status ? ucfirst($server->ping_status) : 'N/A' }}
+                                    </span>
+                                </td>
                                 <td class="py-3">
                                     <span class="px-2 py-1 rounded text-xs font-medium {{ $server->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                         {{ $server->is_active ? 'Active' : 'Inactive' }}
@@ -67,6 +73,11 @@
                                 </td>
                                 <td class="py-3">
                                     <div class="flex gap-2">
+                                        <button wire:click="pingServer({{ $server->id }})" class="text-green-600 hover:text-green-800" title="Ping">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                            </svg>
+                                        </button>
                                         @php
                                             $viewData = [
                                                 'name' => $server->name,

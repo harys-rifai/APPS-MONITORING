@@ -191,12 +191,37 @@ class ServerList extends Component
         $this->showDeleteModal = false;
     }
 
-    public function executeDelete()
+public function executeDelete()
     {
         if ($this->serverId) {
             Server::find($this->serverId)->delete();
             session()->flash('message', 'Server deleted successfully!');
         }
         $this->cancelDelete();
+    }
+
+    public function pingServer($id)
+    {
+        $server = Server::find($id);
+        if (!$server) return;
+
+        $host = $server->ip;
+        
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $command = "ping -n 1 -w 1000 " . escapeshellarg($host);
+            $output = shell_exec($command);
+            $success = stripos($output, 'Reply from') !== false || stripos($output, 'TTL=') !== false;
+        } else {
+            $command = "ping -c 1 -W 1 " . escapeshellarg($host);
+            $output = shell_exec($command . " 2>&1");
+            $success = stripos($output, '1 packets transmitted, 1 received') !== false || stripos($output, '64 bytes from') !== false;
+        }
+
+        $server->update([
+            'ping_status' => $success ? 'ok' : 'failed',
+            'pinged_at' => now(),
+        ]);
+
+        session()->flash('message', $success ? 'Server is reachable!' : 'Server is not reachable!');
     }
 }

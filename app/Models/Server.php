@@ -15,14 +15,16 @@ class Server extends Model
     }
 
     use Auditable;
-    protected $fillable = [
+protected $fillable = [
         'name', 'hostname', 'ip', 'os', 'type',
         'cpu_threshold', 'ram_threshold', 'disk_threshold', 'network_threshold',
-        'location', 'api_token', 'is_active', 'organisation_id', 'branch_id'
+        'location', 'api_token', 'is_active', 'organisation_id', 'branch_id',
+        'ping_status', 'pinged_at'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'pinged_at' => 'datetime',
     ];
 
     public function organisation(): BelongsTo

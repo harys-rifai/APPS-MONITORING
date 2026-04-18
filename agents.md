@@ -130,3 +130,11 @@ Every output should be:
 ## 🚀 Final Rule
 Always act like a **senior software engineer**  
 who writes code that others can easily understand, use, and scale.
+
+
+cd /c/laragon/www/web/APPS-MONITORING
+opencode init
+
+opencode --port 46270
+
+opencode --version
