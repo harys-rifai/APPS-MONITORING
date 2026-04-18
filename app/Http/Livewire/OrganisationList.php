@@ -2,24 +2,24 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Corporate;
+use App\Models\organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class CorporateList extends Component
+class organisationList extends Component
 {
     use WithPagination;
 
     public $showModal = false;
     public $showViewModal = false;
     public $showDeleteModal = false;
-    public $corporateId = null;
+    public $organisationId = null;
     public $name = '';
     public $location = '';
     public $is_active = true;
     public $search = '';
-    public $viewCorporate = null;
+    public $vieworganisation = null;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -28,24 +28,24 @@ class CorporateList extends Component
 
     public function render()
     {
-        $corporates = Corporate::where(function($query) {
+        $organisations = organisation::where(function($query) {
             $query->where('name', 'like', '%' . $this->search . '%')
                 ->orWhere('location', 'like', '%' . $this->search . '%');
         })
         ->orderBy('created_at', 'desc')
         ->paginate(10);
         
-        return view('livewire.corporate-list', compact('corporates'));
+        return view('livewire.organisation-list', compact('organisations'));
     }
 
     public function openModal($id = null)
     {
         if ($id) {
-            $corporate = Corporate::find($id);
-            $this->corporateId = $corporate->id;
-            $this->name = $corporate->name;
-            $this->location = $corporate->location ?? '';
-            $this->is_active = $corporate->is_active;
+            $organisation = organisation::find($id);
+            $this->organisationId = $organisation->id;
+            $this->name = $organisation->name;
+            $this->location = $organisation->location ?? '';
+            $this->is_active = $organisation->is_active;
         } else {
             $this->resetFields();
         }
@@ -58,11 +58,11 @@ class CorporateList extends Component
         $this->resetFields();
     }
 
-    public function viewCorporate($id)
+    public function vieworganisation($id)
     {
-        $corporate = Corporate::with(['users', 'servers', 'databases'])->find($id);
-        if ($corporate) {
-            $this->viewCorporate = $corporate;
+        $organisation = organisation::with(['users', 'servers', 'databases'])->find($id);
+        if ($organisation) {
+            $this->vieworganisation = $organisation;
             $this->showViewModal = true;
         }
     }
@@ -70,12 +70,12 @@ class CorporateList extends Component
     public function closeViewModal()
     {
         $this->showViewModal = false;
-        $this->viewCorporate = null;
+        $this->vieworganisation = null;
     }
 
     public function resetFields()
     {
-        $this->corporateId = null;
+        $this->organisationId = null;
         $this->name = '';
         $this->location = '';
         $this->is_active = true;
@@ -85,14 +85,14 @@ class CorporateList extends Component
     {
         $this->validate();
 
-        if ($this->corporateId) {
-            Corporate::find($this->corporateId)->update([
+        if ($this->organisationId) {
+            organisation::find($this->organisationId)->update([
                 'name' => $this->name,
                 'location' => $this->location,
                 'is_active' => $this->is_active,
             ]);
         } else {
-            Corporate::create([
+            organisation::create([
                 'name' => $this->name,
                 'location' => $this->location,
                 'is_active' => $this->is_active,
@@ -101,39 +101,39 @@ class CorporateList extends Component
         }
 
         $this->closeModal();
-        session()->flash('message', 'Corporate saved successfully!');
+        session()->flash('message', 'organisation saved successfully!');
     }
 
     public function delete($id)
     {
-        Corporate::find($id)->delete();
-        session()->flash('message', 'Corporate deleted successfully!');
+        organisation::find($id)->delete();
+        session()->flash('message', 'organisation deleted successfully!');
     }
 
     public function confirmDelete($id)
     {
-        $this->corporateId = $id;
+        $this->organisationId = $id;
         $this->showDeleteModal = true;
     }
 
     public function cancelDelete()
     {
-        $this->corporateId = null;
+        $this->organisationId = null;
         $this->showDeleteModal = false;
     }
 
     public function executeDelete()
     {
-        if ($this->corporateId) {
-            Corporate::find($this->corporateId)->delete();
-            session()->flash('message', 'Corporate deleted successfully!');
+        if ($this->organisationId) {
+            organisation::find($this->organisationId)->delete();
+            session()->flash('message', 'organisation deleted successfully!');
         }
         $this->cancelDelete();
     }
 
     public function toggleActive($id)
     {
-        $corporate = Corporate::find($id);
-        $corporate->update(['is_active' => !$corporate->is_active]);
+        $organisation = organisation::find($id);
+        $organisation->update(['is_active' => !$organisation->is_active]);
     }
 }

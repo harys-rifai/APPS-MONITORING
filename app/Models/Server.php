@@ -9,20 +9,30 @@ use App\Traits\Auditable;
 
 class Server extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new \App\Models\Scopes\TenantScope);
+    }
+
     use Auditable;
     protected $fillable = [
         'name', 'hostname', 'ip', 'os', 'type',
         'cpu_threshold', 'ram_threshold', 'disk_threshold', 'network_threshold',
-        'location', 'api_token', 'is_active', 'role_id', 'corporate_id'
+        'location', 'api_token', 'is_active', 'organisation_id', 'branch_id'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
 
-    public function corporate(): BelongsTo
+    public function organisation(): BelongsTo
     {
-        return $this->belongsTo(Corporate::class);
+        return $this->belongsTo(Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function setIsActiveAttribute($value): void
@@ -40,10 +50,7 @@ class Server extends Model
         return $this->hasMany(ServerMetric::class);
     }
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
+    
 
     public function latestMetrics()
     {
@@ -55,3 +62,6 @@ class Server extends Model
         return $query->where('is_active', '=', true);
     }
 }
+
+
+

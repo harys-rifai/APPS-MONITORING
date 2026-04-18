@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Database;
-use App\Models\Corporate;
+use App\Models\organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,7 +17,7 @@ class DatabaseList extends Component
     public $showDeleteModal = false;
     public $databaseId = null;
     public $server_id = null;
-    public $corporate_id = null;
+    public $organisation_id = null;
     public $name = '';
     public $type = 'postgres';
     public $connection_name = '';
@@ -46,12 +46,12 @@ class DatabaseList extends Component
     public function render()
     {
         $user = Auth::user();
-        $corporateId = $user ? $user->corporate_id : null;
+        $organisationId = $user ? $user->organisation_id : null;
         
         $databases = Database::with('server')
             ->whereRaw('is_active = true')
-            ->when($corporateId, function($query) use ($corporateId) {
-                return $query->where('corporate_id', $corporateId);
+            ->when($organisationId, function($query) use ($organisationId) {
+                return $query->where('organisation_id', $organisationId);
             })
             ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
@@ -68,7 +68,7 @@ class DatabaseList extends Component
             $db = Database::whereRaw('is_active = true')->find($id);
             $this->databaseId = $db->id;
             $this->server_id = $db->server_id;
-            $this->corporate_id = $db->corporate_id;
+            $this->organisation_id = $db->organisation_id;
             $this->name = $db->name;
             $this->type = $db->type;
             $this->connection_name = $db->connection_name ?? '';
@@ -112,7 +112,7 @@ class DatabaseList extends Component
     {
         $this->databaseId = null;
         $this->server_id = null;
-        $this->corporate_id = null;
+        $this->organisation_id = null;
         $this->name = '';
         $this->type = 'postgres';
         $this->connection_name = '';
@@ -148,7 +148,7 @@ class DatabaseList extends Component
                 'idle_threshold' => $this->idle_threshold,
                 'lock_threshold' => $this->lock_threshold,
                 'is_active' => $this->is_active,
-                'corporate_id' => $this->corporate_id,
+                'organisation_id' => $this->organisation_id,
             ]);
         } else {
             Database::create([
@@ -165,7 +165,7 @@ class DatabaseList extends Component
                 'idle_threshold' => $this->idle_threshold,
                 'lock_threshold' => $this->lock_threshold,
                 'is_active' => $this->is_active,
-                'corporate_id' => $this->corporate_id,
+                'organisation_id' => $this->organisation_id,
             ]);
         }
 

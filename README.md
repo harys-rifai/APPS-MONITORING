@@ -1,266 +1,71 @@
-# DB Monitoring - Laravel 13 Application
+# APPS-MONITORING (Laravel 13)
 
-Server and Database Monitoring System with Real-time Dashboard, Alert Notifications, and Job Queue Processing.
+Advanced Server and Database Monitoring System with Multi-Tenant Architecture, Role-Based Access Control (RBAC), and Real-time Dashboard.
 
-## Screenshots
+## 🚀 Key Features
 
-![Dashboard](Screenshot%202026-04-06%20at%2018.13.47.png)
+### 1. Multi-Tenant Architecture
+- **Hierarchical Structure**: Organisation → Branch → Team.
+- **Data Isolation**: Automatic data filtering using Eloquent `TenantScope`.
+- **Management**: Full CRUD for Organisations and Branches with dedicated management views.
 
-## Features
+### 2. Role-Based Access Control (RBAC)
+- Powered by `spatie/laravel-permission`.
+- **Roles**: Admin (Org), Branch Manager, Line Manager, Supervisor, and User.
+- **Isolation**: Roles are hierarchical but strictly isolated per organization.
 
-### 1. Server Monitoring
-- Monitor CPU, RAM, Disk, and Network usage
-- Configurable thresholds per server
-- Support for Linux, Windows, and macOS
+### 3. Monitoring Capabilities
+- **Server Monitoring**: Real-time tracking of CPU, RAM, Disk, and Network usage.
+- **Database Monitoring**: Support for PostgreSQL, MySQL, SQL Server, and Oracle.
+- **Real-time PostgreSQL Monitor**: Deep dive into active connections, query duration, and table sizes.
 
-### 2. Database Monitoring
-- Support for PostgreSQL, MySQL, SQL Server, DB2, and Oracle
-- Query metrics: Active, Idle, Locked counts
-- Configurable thresholds per database
+### 4. UI/UX (Modern & Responsive)
+- **Aurora/Glassmorphism Theme**: Translucent cards with backdrop blur.
+- **Animated Header**: Real-time clock (WIB) and dynamic date positioning.
+- **Collapsible Sidebar**: Space-efficient navigation with tooltips.
+- **App Versioning**: Automatic version tracking displayed in the sidebar footer.
 
-### 3. Realtime Database Monitor
-- Direct connection to PostgreSQL databases via PDO
-- Real-time connection stats (Total, Active, Idle, Locked)
-- Database info: Version, Size, Table count, Max connections
-- Active connections: PID, User, App, Client IP, State, Query, Duration
-- Tables with size breakdown: Table Size, Index Size, Total Size
-- Auto-refresh every 5 seconds using Livewire polling
-- Pagination for both connections and tables
+## 🛠️ Tech Stack
 
-### 4. Spike Detection & Alerts
-- Real-time threshold monitoring
-- Email notifications
-- Telegram Bot integration
-- Webhook support
+- **Framework**: Laravel 13 (PHP 8.2+)
+- **Frontend**: Livewire 3 + Tailwind CSS
+- **Database**: PostgreSQL
+- **RBAC**: Spatie Laravel Permission
+- **Timezone**: Asia/Jakarta (WIB)
 
-### 5. Recovery Alerts
-- Automatic OK status notifications when metrics return to normal
-
-### 6. Dashboard
-- Real-time monitoring with Livewire + Tailwind CSS
-- Aurora/Glassmorphism UI theme
-- Server and database status overview
-- Recent alerts log
-
-### 7. Management
-- CRUD for servers and databases
-- Search functionality on Server and Database list pages
-- View/Edit/Delete buttons for each record
-
-## Tech Stack
-
-- **Framework**: Laravel 13
-- **Database**: PostgreSQL (Neon)
-- **Queue**: Sync (configurable to Redis)
-- **UI**: TailwindCSS + Livewire
-- **Auth**: Laravel Breeze
-
-## Installation
+## 📥 Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/harys-rifai/APPS-MONITORING.git
 
-# Install dependencies
+# Install PHP dependencies
 composer install
 
-# Install Node dependencies
-npm install
+# Install JS dependencies
+npm install && npm run build
 
-# Build assets
-npm run build
+# Configure Environment
+cp .env.example .env
+# Update DB_CONNECTION=pgsql and your credentials in .env
 
-# Run migrations
-php artisan migrate
+# Run Migrations & Seeders (Required for RBAC & Initial Org)
+php artisan migrate:fresh --seed
 
-# Seed database
-php artisan db:seed
-
-# Start server
+# Start Application
 php artisan serve
 ```
 
-## Default Login
+## 🔐 Default Admin Login
 
-- **Email**: harys@google.com
-- **Password**: xcxcxc
+- **Email**: `harys@google.com`
+- **Password**: `xcxcxc`
+- **Role**: Super Admin (Organisation Level)
 
-## Configuration
+## 📈 Application Versioning
+The system tracks updates in the `app_versions` table. The current version is displayed at the bottom of the left sidebar.
+- **v.1.0.0**: Initial Multi-tenant Rebuild.
+- **v.1.0.1**: UI Refinements, Clock/Timezone fixes.
 
-### Database Connection
-Copy `.env.example` to `.env` and update with your PostgreSQL credentials:
-```
-DB_CONNECTION=pgsql
-DB_HOST=your_host
-DB_PORT=5432
-DB_DATABASE=your_db
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-```
-
-### Staging Database Connection (Optional)
-For staging environment:
-```
-DB_STAGING_CONNECTION=pgsql
-DB_STAGING_HOST=ep-blue-morning-am69itpc-pooler.c-5.us-east-1.aws.neon.tech
-DB_STAGING_PORT=5432
-DB_STAGING_DATABASE=neondb
-DB_STAGING_USERNAME=neondb_owner
-DB_STAGING_PASSWORD=your_password
-```
-
-Usage in code:
-```php
-DB::connection('pgsql_staging')->table('...')->get();
-```
-
-### Telegram Notifications (Optional)
-Add to `.env`:
-```
-TEGRAM_BOT_TOKEN=your_bot_token
-TEGRAM_CHAT_ID=your_chat_id
-```
-
-### API Endpoints
-- `POST /api/metrics` - Receive metrics from monitoring agents
-- `GET /api/health` - Health check
-
-## Routes
-
-| Route | Description |
-|-------|-------------|
-| `/dashboard` | Main dashboard |
-| `/servers` | Server list with CRUD |
-| `/databases` | Database list with CRUD |
-| `/database/{id}/monitor` | Realtime PostgreSQL monitor |
-| `/audit-logs` | Audit log viewer |
-
-## Project Structure
-
-```
-app/
-├── Console/Kernel.php          # Scheduler
-├── Events/                     # Event classes
-│   ├── ServerSpikeDetected.php
-│   ├── ServerRecovered.php
-│   ├── DatabaseSpikeDetected.php
-│   └── DatabaseRecovered.php
-├── Jobs/                       # Queue jobs
-│   ├── CheckServerMetrics.php
-│   └── CheckDatabaseMetrics.php
-├── Listeners/                  # Alert listeners
-├── Models/                     # Eloquent models
-│   ├── Server.php
-│   ├── Database.php
-│   ├── DbMetric.php
-│   ├── ServerMetric.php
-│   └── Alert.php
-├── Http/Livewire/              # Livewire components
-│   ├── Dashboard.php
-│   ├── ServerList.php
-│   ├── DatabaseList.php
-│   └── RealtimeDatabaseMonitor.php
-├── Services/
-│   └── PostgreSqlConnector.php # PostgreSQL PDO connection
-└── Notifications/              # Notification classes
-```
-
-## PostgreSqlConnector Service
-
-The `PostgreSqlConnector` service provides direct PostgreSQL connections using PDO:
-
-```php
-$connector = new PostgreSqlConnector();
-
-$config = [
-    'host' => '127.0.0.1',
-    'port' => 5432,
-    'database' => 'mydb',
-    'username' => 'user',
-    'password' => 'pass',
-];
-
-// Get connection stats
-$stats = $connector->getDatabaseStats($config);
-// Returns: ['active' => 0, 'idle' => 0, 'locked' => 0, 'total' => 0]
-
-// Get database info
-$info = $connector->getDatabaseInfo($config);
-// Returns: ['version', 'size', 'tables', 'connections', 'max_connections']
-
-// Get active connections
-$connections = $connector->getConnectionInfo($config);
-// Returns: array of connections with PID, user, app, client_ip, state, query, duration
-
-// Get table stats with sizes
-$tables = $connector->getTableStats($config);
-// Returns: array of tables with n, name, schema, total_size, table_size, index_size
-```
-
-## Scheduler
-
-The scheduler runs every minute to check:
-1. Server metrics via API
-2. Database query statistics
-
-## Monitoring Agent
-
-Create a Python/PowerShell agent on target servers to send metrics:
-
-```python
-import requests
-import psutil
-
-# Get metrics
-cpu = psutil.cpu_percent()
-ram = psutil.virtual_memory().percent
-disk = psutil.disk_usage('/').percent
-net_in = psutil.net_io_counters().bytes_recv / 1024 / 1024
-net_out = psutil.net_io_counters().bytes_sent / 1024 / 1024
-
-# Send to API
-requests.post('http://your-server/api/metrics', json={
-    'api_token': 'server_api_token',
-    'cpu': cpu,
-    'ram': ram,
-    'disk': disk,
-    'network_in': net_in,
-    'network_out': net_out
-})
-```
-
-## UI Features
-
-### Right Sidebar Layout
-- Collapsible sidebar (icon-only mode)
-- Hover tooltips showing menu names
-- Glassmorphism styling with gradient backgrounds
-
-### Aurora/Glassmorphism Theme
-- Primary color: Indigo (#6366f1)
-- Gradient backgrounds
-- Translucent cards with backdrop blur
-
-### Modal Improvements
-- Compact modal sizes (max-w-md for all pages)
-- Smaller padding (p-4), text (text-sm), buttons (px-3 py-1.5)
-- Icons in modal headers for visual context
-- Modal positioned below navbar using pt-16
-- X close button in top-right corner
-- Click outside to close modal
-- No dark overlay (clean transparent background)
-- Scrollable content for long forms (max-h-[70vh])
-- Integrated Corporate selection in Server/Database forms
-- Debounced search input (300ms delay)
-- Loading spinner on save button
-- Custom delete confirmation modal
-- Red border on validation errors
-
-### View Modal
-- Livewire-powered view modals (no JS fallback)
-- Click outside to close
-- Smaller compact layout
-
-## License
-
+## 📝 License
 MIT License

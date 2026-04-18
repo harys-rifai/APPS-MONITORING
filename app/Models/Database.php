@@ -9,12 +9,17 @@ use App\Traits\Auditable;
 
 class Database extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new \App\Models\Scopes\TenantScope);
+    }
+
     use Auditable;
     protected $fillable = [
         'server_id', 'name', 'type', 'connection_name',
         'host', 'port', 'username', 'password', 'database',
         'active_threshold', 'idle_threshold', 'lock_threshold',
-        'status', 'is_active', 'role_id', 'corporate_id'
+        'status', 'is_active', 'organisation_id', 'branch_id'
     ];
 
     protected $casts = [
@@ -26,9 +31,14 @@ class Database extends Model
         $this->attributes['is_active'] = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool) $value;
     }
 
-    public function corporate(): BelongsTo
+    public function organisation(): BelongsTo
     {
-        return $this->belongsTo(Corporate::class);
+        return $this->belongsTo(Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function server(): BelongsTo
@@ -41,13 +51,13 @@ class Database extends Model
         return $this->hasMany(DbMetric::class);
     }
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
+    
 
     public function latestMetrics()
     {
         return $this->hasOne(DbMetric::class)->latestOfMany();
     }
 }
+
+
+

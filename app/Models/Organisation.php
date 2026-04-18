@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Corporate extends Model
+class Organisation extends Model
 {
     protected $fillable = ['name', 'location', 'is_active', 'created_by'];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
 
     public function users(): HasMany
     {
@@ -26,10 +28,5 @@ class Corporate extends Model
     public function databases(): HasMany
     {
         return $this->hasMany(Database::class);
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
     }
 }

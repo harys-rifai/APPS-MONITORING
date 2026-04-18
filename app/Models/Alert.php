@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Alert extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new \App\Models\Scopes\TenantScope);
+    }
+
     public const SEVERITY_INFO = 'info';
     public const SEVERITY_WARNING = 'warning';
     public const SEVERITY_CRITICAL = 'critical';
@@ -16,7 +21,7 @@ class Alert extends Model
     public const STATUS_RESOLVED = 'resolved';
 
     protected $fillable = [
-        'alertable_type', 'alertable_id', 'type', 'status', 'severity', 'message', 'metrics', 'is_active', 'role_id', 'group_key', 'resolved_at'
+        'alertable_type', 'alertable_id', 'type', 'status', 'severity', 'message', 'metrics', 'is_active', 'organisation_id', 'branch_id', 'group_key', 'resolved_at'
     ];
 
     protected $casts = [
@@ -30,10 +35,7 @@ class Alert extends Model
         return $this->morphTo();
     }
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
+    
 
     public function isCritical(): bool
     {
@@ -45,3 +47,5 @@ class Alert extends Model
         return $this->status === self::STATUS_RESOLVED;
     }
 }
+
+

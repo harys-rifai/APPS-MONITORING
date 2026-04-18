@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use App\Models\Organisation;
+use App\Models\Branch;
 use App\Models\Server;
 use App\Models\Database;
 use App\Models\User;
@@ -13,16 +14,33 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        $org = Organisation::create(['name' => 'Default Organisation', 'is_active' => true]);
+        $branch = Branch::create(['organisation_id' => $org->id, 'name' => 'Main Branch', 'is_active' => true]);
+
+        $admin = User::create([
             'name' => 'Harys Rifai',
             'email' => 'harys@google.com',
             'password' => Hash::make('xcxcxc'),
+            'organisation_id' => $org->id,
+            'branch_id' => $branch->id,
+            'is_active' => true,
         ]);
+        $admin->assignRole('Admin');
 
-        Role::create(['name' => 'admin', 'description' => 'Administrator with full access']);
-        Role::create(['name' => 'operator', 'description' => 'Operator with limited access']);
+        $manager = User::create([
+            'name' => 'Branch Manager User',
+            'email' => 'manager@google.com',
+            'password' => Hash::make('password'),
+            'organisation_id' => $org->id,
+            'branch_id' => $branch->id,
+            'manager_id' => $admin->id,
+            'is_active' => true,
+        ]);
+        $manager->assignRole('Branch Manager');
 
-        Server::create([
+        $server = Server::create([
             'name' => 'Production Server 1',
             'hostname' => 'prod-server-1',
             'ip' => '192.168.1.10',
@@ -33,25 +51,13 @@ class DatabaseSeeder extends Seeder
             'disk_threshold' => 85,
             'network_threshold' => 100,
             'location' => 'Jakarta DC',
-            'is_active' => true,
-        ]);
-
-        Server::create([
-            'name' => 'Windows App Server',
-            'hostname' => 'win-app-server',
-            'ip' => '192.168.1.20',
-            'os' => 'windows',
-            'type' => 'server',
-            'cpu_threshold' => 75,
-            'ram_threshold' => 80,
-            'disk_threshold' => 90,
-            'network_threshold' => 50,
-            'location' => 'Surabaya DC',
+            'organisation_id' => $org->id,
+            'branch_id' => $branch->id,
             'is_active' => true,
         ]);
 
         Database::create([
-            'server_id' => 1,
+            'server_id' => $server->id,
             'name' => 'Main PostgreSQL',
             'type' => 'postgres',
             'connection_name' => 'main_postgres',
@@ -62,21 +68,8 @@ class DatabaseSeeder extends Seeder
             'idle_threshold' => 100,
             'lock_threshold' => 5,
             'status' => 'ok',
-            'is_active' => true,
-        ]);
-
-        Database::create([
-            'server_id' => 1,
-            'name' => 'Analytics MySQL',
-            'type' => 'mysql',
-            'connection_name' => 'analytics_mysql',
-            'host' => 'localhost',
-            'port' => 3306,
-            'database' => 'analytics',
-            'active_threshold' => 30,
-            'idle_threshold' => 50,
-            'lock_threshold' => 3,
-            'status' => 'ok',
+            'organisation_id' => $org->id,
+            'branch_id' => $branch->id,
             'is_active' => true,
         ]);
     }

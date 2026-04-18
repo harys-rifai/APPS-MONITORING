@@ -133,11 +133,11 @@
                     <form wire:submit.prevent="save" @submit="loading = true">
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">Corporate</label>
-                                <select wire:model="corporate_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-indigo-500">
-                                    <option value="">Select Corporate</option>
-                                    @foreach(\App\Models\Corporate::whereRaw('is_active = true')->get() as $corporate)
-                                        <option value="{{ $corporate->id }}">{{ $corporate->name }}</option>
+                                <label class="block text-xs text-gray-600 mb-1">organisation</label>
+                                <select wire:model="organisation_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-indigo-500">
+                                    <option value="">Select organisation</option>
+                                    @foreach(\App\Models\organisation::whereRaw('is_active = true')->get() as $organisation)
+                                        <option value="{{ $organisation->id }}">{{ $organisation->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

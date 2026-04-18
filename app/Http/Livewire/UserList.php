@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use App\Models\Corporate;
+use App\Models\organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,32 +19,32 @@ class UserList extends Component
     public $name = '';
     public $email = '';
     public $password = '';
-    public $corporate_id = null;
+    public $organisation_id = null;
     public $is_active = true;
     public $search = '';
     public $viewUser = null;
-    public $corporates = [];
+    public $organisations = [];
 
     protected $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'nullable|string|min:8',
-        'corporate_id' => 'required',
+        'organisation_id' => 'required',
     ];
 
     public function mount()
     {
-        $this->corporates = Corporate::where('is_active', true)->get();
+        $this->organisations = organisation::where('is_active', true)->get();
     }
 
     public function render()
     {
         $adminUser = Auth::user();
-        $adminCorporateId = $adminUser ? $adminUser->corporate_id : null;
+        $adminorganisationId = $adminUser ? $adminUser->organisation_id : null;
 
-        $users = User::with('corporate')
-            ->when($adminCorporateId, function($query) use ($adminCorporateId) {
-                return $query->where('corporate_id', $adminCorporateId);
+        $users = User::with('organisation')
+            ->when($adminorganisationId, function($query) use ($adminorganisationId) {
+                return $query->where('organisation_id', $adminorganisationId);
             })
             ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
@@ -62,7 +62,7 @@ class UserList extends Component
             $this->userId = $user->id;
             $this->name = $user->name;
             $this->email = $user->email;
-            $this->corporate_id = $user->corporate_id;
+            $this->organisation_id = $user->organisation_id;
             $this->is_active = $user->is_active;
         } else {
             $this->resetFields();
@@ -78,7 +78,7 @@ class UserList extends Component
 
     public function viewUser($id)
     {
-        $user = User::with('corporate')->find($id);
+        $user = User::with('organisation')->find($id);
         if ($user) {
             $this->viewUser = $user;
             $this->showViewModal = true;
@@ -97,7 +97,7 @@ class UserList extends Component
         $this->name = '';
         $this->email = '';
         $this->password = '';
-        $this->corporate_id = null;
+        $this->organisation_id = null;
         $this->is_active = true;
     }
 
@@ -108,7 +108,7 @@ class UserList extends Component
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $this->userId,
                 'password' => 'nullable|string|min:8',
-                'corporate_id' => 'required',
+                'organisation_id' => 'required',
             ]);
         } else {
             $this->validate();
@@ -117,7 +117,7 @@ class UserList extends Component
         $data = [
             'name' => $this->name,
             'email' => $this->email,
-            'corporate_id' => $this->corporate_id,
+            'organisation_id' => $this->organisation_id,
             'is_active' => $this->is_active,
         ];
 

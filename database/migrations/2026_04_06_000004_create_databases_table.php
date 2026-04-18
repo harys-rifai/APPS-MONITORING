@@ -24,7 +24,8 @@ return new class extends Migration
             $table->integer('lock_threshold')->default(10);
             $table->string('status')->default('ok');
             $table->boolean('is_active')->default(true);
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
+            $table->foreignId('organisation_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

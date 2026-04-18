@@ -33,7 +33,7 @@
                     <tr class="text-left text-sm text-gray-500 border-b border-gray-200">
                         <th class="pb-3 font-medium">Name</th>
                         <th class="pb-3 font-medium">Email</th>
-                        <th class="pb-3 font-medium">Corporate</th>
+                        <th class="pb-3 font-medium">organisation</th>
                         <th class="pb-3 font-medium">Status</th>
                         <th class="pb-3 font-medium">Actions</th>
                     </tr>
@@ -43,7 +43,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="py-3 text-sm text-gray-800 font-medium">{{ $user->name }}</td>
                         <td class="py-3 text-sm text-gray-600">{{ $user->email }}</td>
-                        <td class="py-3 text-sm text-gray-600">{{ $user->corporate->name ?? '-' }}</td>
+                        <td class="py-3 text-sm text-gray-600">{{ $user->organisation->name ?? '-' }}</td>
                         <td class="py-3">
                             <button wire:click="toggleActive({{ $user->id }})" class="px-2 py-1 rounded text-xs font-medium {{ $user->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
                                 {{ $user->is_active ? 'Active' : 'Inactive' }}
@@ -117,14 +117,14 @@
                         @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Corporate</label>
-                        <select wire:model="corporate_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 @error('corporate_id') border-red-500 @else border-gray-300 @endif">
-                            <option value="">Select Corporate</option>
-                            @foreach($corporates as $corporate)
-                                <option value="{{ $corporate->id }}">{{ $corporate->name }}</option>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">organisation</label>
+                        <select wire:model="organisation_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 @error('organisation_id') border-red-500 @else border-gray-300 @endif">
+                            <option value="">Select organisation</option>
+                            @foreach($organisations as $organisation)
+                                <option value="{{ $organisation->id }}">{{ $organisation->name }}</option>
                             @endforeach
                         </select>
-                        @error('corporate_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        @error('organisation_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex items-center gap-2">
                         <input type="checkbox" wire:model="is_active" id="is_active" class="rounded border-gray-300 text-indigo-600">
@@ -173,8 +173,8 @@
                     <span class="text-gray-800">{{ $viewUser->email }}</span>
                 </div>
                 <div class="flex justify-between py-1.5 border-b">
-                    <span class="text-gray-500">Corporate:</span>
-                    <span class="text-gray-800">{{ $viewUser->corporate->name ?? '-' }}</span>
+                    <span class="text-gray-500">organisation:</span>
+                    <span class="text-gray-800">{{ $viewUser->organisation->name ?? '-' }}</span>
                 </div>
                 <div class="flex justify-between py-1.5 border-b">
                     <span class="text-gray-500">Status:</span>

@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Server;
-use App\Models\Corporate;
+use App\Models\organisation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -30,8 +30,8 @@ class ServerList extends Component
     public $is_active = true;
     public $search = '';
     public $viewServer = null;
-    public $corporate_id = null;
-    public $corporates = [];
+    public $organisation_id = null;
+    public $organisations = [];
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -47,17 +47,17 @@ class ServerList extends Component
 
     public function mount()
     {
-        $this->corporates = Corporate::where('is_active', true)->get();
+        $this->organisations = organisation::where('is_active', true)->get();
     }
 
     public function render()
     {
         $user = Auth::user();
-        $corporateId = $user ? $user->corporate_id : null;
+        $organisationId = $user ? $user->organisation_id : null;
         
         $servers = Server::whereRaw('is_active = true')
-            ->when($corporateId, function($query) use ($corporateId) {
-                return $query->where('corporate_id', $corporateId);
+            ->when($organisationId, function($query) use ($organisationId) {
+                return $query->where('organisation_id', $organisationId);
             })
             ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
@@ -85,7 +85,7 @@ class ServerList extends Component
             $this->location = $server->location ?? '';
             $this->api_token = $server->api_token ?? '';
             $this->is_active = $server->is_active;
-            $this->corporate_id = $server->corporate_id;
+            $this->organisation_id = $server->organisation_id;
         } else {
             $this->resetFields();
         }
@@ -116,7 +116,7 @@ class ServerList extends Component
     public function resetFields()
     {
         $this->serverId = null;
-        $this->corporate_id = null;
+        $this->organisation_id = null;
         $this->name = '';
         $this->hostname = '';
         $this->ip = '';
@@ -149,7 +149,7 @@ class ServerList extends Component
                 'location' => $this->location,
                 'api_token' => $this->api_token,
                 'is_active' => $this->is_active,
-                'corporate_id' => $this->corporate_id,
+                'organisation_id' => $this->organisation_id,
             ]);
         } else {
             Server::create([
@@ -165,7 +165,7 @@ class ServerList extends Component
                 'location' => $this->location,
                 'api_token' => $this->api_token,
                 'is_active' => $this->is_active,
-                'corporate_id' => $this->corporate_id,
+                'organisation_id' => $this->organisation_id,
             ]);
         }
 

@@ -43,12 +43,12 @@ class Dashboard extends Component
     public function loadData()
     {
         $user = Auth::user();
-        $corporateId = $user ? $user->corporate_id : null;
+        $organisationId = $user ? $user->organisation_id : null;
 
         $this->servers = Server::with('latestMetrics')
             ->whereRaw('is_active = true')
-            ->when($corporateId, function($query) use ($corporateId) {
-                return $query->where('corporate_id', $corporateId);
+            ->when($organisationId, function($query) use ($organisationId) {
+                return $query->where('organisation_id', $organisationId);
             })
             ->get()
             ->map(function ($server) {
@@ -63,8 +63,8 @@ class Dashboard extends Component
 
         $this->databases = Database::with('latestMetrics')
             ->whereRaw('is_active = true')
-            ->when($corporateId, function($query) use ($corporateId) {
-                return $query->where('corporate_id', $corporateId);
+            ->when($organisationId, function($query) use ($organisationId) {
+                return $query->where('organisation_id', $organisationId);
             })
             ->get()
             ->map(function ($db) {
@@ -77,9 +77,9 @@ class Dashboard extends Component
             ->toArray();
 
         $this->recentAlerts = Alert::with('alertable')
-            ->when($corporateId, function($query) use ($corporateId) {
-                return $query->whereHasMorph('alertable', [Server::class, Database::class], function($q) use ($corporateId) {
-                    $q->where('corporate_id', $corporateId);
+            ->when($organisationId, function($query) use ($organisationId) {
+                return $query->whereHasMorph('alertable', [Server::class, Database::class], function($q) use ($organisationId) {
+                    $q->where('organisation_id', $organisationId);
                 });
             })
             ->orderBy('created_at', 'desc')
@@ -89,20 +89,20 @@ class Dashboard extends Component
 
         $this->stats = [
             'total_servers' => Server::whereRaw('is_active = true')
-                ->when($corporateId, function($query) use ($corporateId) {
-                    return $query->where('corporate_id', $corporateId);
+                ->when($organisationId, function($query) use ($organisationId) {
+                    return $query->where('organisation_id', $organisationId);
                 })->count(),
             'total_databases' => Database::whereRaw('is_active = true')
-                ->when($corporateId, function($query) use ($corporateId) {
-                    return $query->where('corporate_id', $corporateId);
+                ->when($organisationId, function($query) use ($organisationId) {
+                    return $query->where('organisation_id', $organisationId);
                 })->count(),
             'spike_servers' => Server::where('status', 'spike')
-                ->when($corporateId, function($query) use ($corporateId) {
-                    return $query->where('corporate_id', $corporateId);
+                ->when($organisationId, function($query) use ($organisationId) {
+                    return $query->where('organisation_id', $organisationId);
                 })->count(),
             'spike_databases' => Database::where('status', 'spike')
-                ->when($corporateId, function($query) use ($corporateId) {
-                    return $query->where('corporate_id', $corporateId);
+                ->when($organisationId, function($query) use ($organisationId) {
+                    return $query->where('organisation_id', $organisationId);
                 })->count(),
             'total_alerts' => Alert::count(),
             'recent_spikes' => Alert::where('status', 'spike')->where('created_at', '>=', now()->subHours(24))->count(),

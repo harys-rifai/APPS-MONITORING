@@ -112,7 +112,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s8-1.79 8-4"></path>
                             </svg>
                         </x-nav-link>
-                        <x-nav-link :href="route('corporates')" :active="request()->routeIs('corporates')" class="sidebar-item" data-label="Corporate">
+                        <x-nav-link :href="route('organisations')" :active="request()->routeIs('organisations')" class="sidebar-item" data-label="organisation">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
@@ -145,6 +145,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="px-2 py-3 border-t border-gray-200 flex flex-col items-center justify-center opacity-60">
+                    <span class="text-[7px] font-bold text-gray-400 uppercase tracking-tighter mb-0.5">Ver.</span>
+                    <span class="text-[9px] font-medium text-gray-500">{{ $appVersion }}</span>
+                </div>
             </nav>
 
             <div id="main-wrapper" class="flex-1 flex flex-col">
@@ -159,8 +163,10 @@
                             @yield('title', 'Dashboard')
                         </h1>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm text-gray-500">{{ now()->format('l, F j, Y') }}</span>
+                    <div class="flex items-center gap-3">
+                        <div id="time-display" class="text-[11px] font-bold text-indigo-600 uppercase tracking-wide bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100 tabular-nums"></div>
+                        <div class="border-l border-gray-200 h-6 mx-1"></div>
+                        <div id="date-display" class="text-[11px] font-bold text-gray-500 uppercase tracking-wide"></div>
                     </div>
                 </header>
 
@@ -168,6 +174,8 @@
                     {{ $slot }}
                 </main>
             </div>
+        </div>
+
         </div>
 
         @livewireScripts
@@ -200,6 +208,27 @@
             function closeViewModal() {
                 document.getElementById('viewModalOverlay').classList.add('hidden');
             }
+            function updateClock() {
+                const now = new Date();
+                
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                
+                const timeDisplay = document.getElementById('time-display');
+                if (timeDisplay) {
+                    timeDisplay.textContent = `TIME : ${hours}:${minutes}:${seconds} WIB`;
+                }
+                
+                const dateDisplay = document.getElementById('date-display');
+                if (dateDisplay) {
+                    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                    dateDisplay.textContent = now.toLocaleDateString('en-GB', options);
+                }
+                
+                requestAnimationFrame(updateClock);
+            }
+            updateClock();
         </script>
 
         <div id="viewModalOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden" style="display: none;">

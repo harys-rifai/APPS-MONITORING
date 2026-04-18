@@ -7,11 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServerMetric extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new \App\Models\Scopes\TenantScope);
+    }
+
     protected $table = 'server_metrics';
 
     protected $fillable = [
         'server_id', 'cpu_usage', 'ram_usage', 'disk_usage',
-        'network_in', 'network_out', 'is_active', 'role_id'
+        'network_in', 'network_out', 'is_active', 'organisation_id', 'branch_id'
     ];
 
     protected $casts = [
@@ -23,8 +28,7 @@ class ServerMetric extends Model
         return $this->belongsTo(Server::class);
     }
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
+    
 }
+
+

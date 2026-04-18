@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('api_token')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
+            $table->foreignId('organisation_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

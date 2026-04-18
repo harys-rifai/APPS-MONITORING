@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            $latestVersion = \App\Models\AppVersion::where('is_active', true)->latest()->first();
+            $view->with('appVersion', $latestVersion ? $latestVersion->version : 'v.1.0.0');
+        });
     }
 }

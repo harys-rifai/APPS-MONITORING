@@ -15,7 +15,8 @@ return new class extends Migration
             $table->integer('idle_count')->default(0);
             $table->integer('locked_count')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
+            $table->foreignId('organisation_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

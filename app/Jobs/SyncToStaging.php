@@ -67,13 +67,13 @@ class SyncToStaging implements ShouldQueue
             'location' => $server->location,
             'api_token' => $server->api_token,
             'is_active' => $server->is_active,
-            'role_id' => $server->role_id,
+            'organisation_id', 'branch_id' => $server->organisation_id,
             'status' => $server->status,
             'created_at' => $server->created_at,
             'updated_at' => $server->updated_at,
         ])->toArray();
 
-        $staging->upsert($data, ['id'], ['name', 'hostname', 'ip', 'os', 'type', 'cpu_threshold', 'ram_threshold', 'disk_threshold', 'network_threshold', 'location', 'api_token', 'is_active', 'role_id', 'status', 'updated_at']);
+        $staging->upsert($data, ['id'], ['name', 'hostname', 'ip', 'os', 'type', 'cpu_threshold', 'ram_threshold', 'disk_threshold', 'network_threshold', 'location', 'api_token', 'is_active', 'organisation_id', 'branch_id', 'status', 'updated_at']);
         Log::info("Synced {$mainServers->count()} servers");
     }
 
@@ -98,12 +98,12 @@ class SyncToStaging implements ShouldQueue
             'lock_threshold' => $db->lock_threshold,
             'status' => $db->status,
             'is_active' => $db->is_active,
-            'role_id' => $db->role_id,
+            'organisation_id', 'branch_id' => $db->organisation_id,
             'created_at' => $db->created_at,
             'updated_at' => $db->updated_at,
         ])->toArray();
 
-        $staging->upsert($data, ['id'], ['server_id', 'name', 'type', 'connection_name', 'host', 'port', 'username', 'password', 'database', 'active_threshold', 'idle_threshold', 'lock_threshold', 'status', 'is_active', 'role_id', 'updated_at']);
+        $staging->upsert($data, ['id'], ['server_id', 'name', 'type', 'connection_name', 'host', 'port', 'username', 'password', 'database', 'active_threshold', 'idle_threshold', 'lock_threshold', 'status', 'is_active', 'organisation_id', 'branch_id', 'updated_at']);
         Log::info("Synced {$mainDbs->count()} databases");
     }
 
