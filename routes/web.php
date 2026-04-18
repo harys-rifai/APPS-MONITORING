@@ -21,6 +21,7 @@ Route::get('/database/{id}/monitor', RealtimeDatabaseMonitor::class)->middleware
 Route::get('/organisations', organisationList::class)->middleware(['auth', 'verified'])->name('organisations');
 Route::get('/users', UserList::class)->middleware(['auth', 'verified'])->name('users');
 Route::get('/audit-logs', AuditLogList::class)->middleware(['auth', 'verified'])->name('audit-logs');
+Route::get('/language/{locale}', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('language.switch');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

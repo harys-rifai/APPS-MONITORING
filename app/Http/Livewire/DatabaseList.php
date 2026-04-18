@@ -59,6 +59,34 @@ class DatabaseList extends Component
                     ->orWhere('type', 'like', '%' . $this->search . '%');
             })
             ->paginate(10);
+
+        // Fetch real-time stats for each database
+        $connector = new \App\Services\DatabaseConnector();
+        foreach ($databases->items() as $db) {
+            try {
+                $config = [
+                    'type' => $db->type,
+                    'host' => $db->host,
+                    'port' => $db->port,
+                    'database' => $db->database,
+                    'username' => $db->username,
+                    'password' => $db->password,
+                ];
+                
+                $stats = $connector->getDatabaseStats($config);
+                $db->realtime_stats = $stats;
+                $db->is_reachable = true;
+            } catch (\Exception $e) {
+                $db->realtime_stats = [
+                    'active' => 0,
+                    'idle' => 0,
+                    'locked' => 0,
+                    'total' => 0
+                ];
+                $db->is_reachable = false;
+            }
+        }
+
         return view('livewire.database-list', compact('databases'));
     }
 
@@ -97,6 +125,21 @@ class DatabaseList extends Component
     {
         $db = Database::with('server')->whereRaw('is_active = true')->find($id);
         if ($db) {
+            try {
+                $connector = new \App\Services\DatabaseConnector();
+                $db->realtime_stats = $connector->getDatabaseStats([
+                    'type' => $db->type,
+                    'host' => $db->host,
+                    'port' => $db->port,
+                    'database' => $db->database,
+                    'username' => $db->username,
+                    'password' => $db->password,
+                ]);
+                $db->is_reachable = true;
+            } catch (\Exception $e) {
+                $db->realtime_stats = ['active' => 0, 'idle' => 0, 'locked' => 0];
+                $db->is_reachable = false;
+            }
             $this->viewDatabase = $db;
             $this->showViewModal = true;
         }

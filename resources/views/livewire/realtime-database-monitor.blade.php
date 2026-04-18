@@ -169,9 +169,9 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="py-2 text-sm text-gray-600">{{ $table['n'] }}</td>
                                     <td class="py-2 text-sm text-gray-800 font-medium">{{ $table['name'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $table['table_size'] }}</td>
-                                    <td class="py-2 text-sm text-gray-600">{{ $table['index_size'] }}</td>
-                                    <td class="py-2 text-sm text-gray-800 font-medium">{{ $table['total_size'] }}</td>
+                                    <td class="py-2 text-sm text-gray-600">{{ $table['table_size'] ?? '-' }}</td>
+                                    <td class="py-2 text-sm text-gray-600">{{ $table['index_size'] ?? '-' }}</td>
+                                    <td class="py-2 text-sm text-gray-800 font-medium">{{ $table['total_size'] ?? '-' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

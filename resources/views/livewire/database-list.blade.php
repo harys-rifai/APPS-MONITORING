@@ -1,5 +1,5 @@
 @section('title', 'Databases')
-<div class="glass-card">
+<div class="glass-card" wire:poll.10s>
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-6 p-6 pb-0">
             <div>
@@ -39,10 +39,10 @@
                             <th class="pb-3 font-medium">Name</th>
                             <th class="pb-3 font-medium">Type</th>
                             <th class="pb-3 font-medium">Host</th>
-                            <th class="pb-3 font-medium">Active</th>
-                            <th class="pb-3 font-medium">Idle</th>
-                            <th class="pb-3 font-medium">Locked</th>
-                            <th class="pb-3 font-medium">Status</th>
+                            <th class="pb-3 font-medium text-center">Active</th>
+                            <th class="pb-3 font-medium text-center">Idle</th>
+                            <th class="pb-3 font-medium text-center">Locked</th>
+                            <th class="pb-3 font-medium text-center">Status</th>
                             <th class="pb-3 font-medium">Actions</th>
                         </tr>
                     </thead>
@@ -61,12 +61,20 @@
                                     <span class="px-2 py-1 rounded text-xs bg-purple-100 text-purple-700 uppercase">{{ $db->type }}</span>
                                 </td>
                                 <td class="py-3 text-gray-600">{{ $db->host }}:{{ $db->port }}</td>
-                                <td class="py-3 text-gray-600">{{ $db->active_threshold }}</td>
-                                <td class="py-3 text-gray-600">{{ $db->idle_threshold }}</td>
-                                <td class="py-3 text-gray-600">{{ $db->lock_threshold }}</td>
-                                <td class="py-3">
-                                    <span class="px-2 py-1 rounded text-xs font-medium {{ $db->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                        {{ $db->is_active ? 'Active' : 'Inactive' }}
+                                <td class="py-3 text-center">
+                                    <span class="font-semibold {{ ($db->realtime_stats['active'] ?? 0) >= $db->active_threshold ? 'text-red-600' : 'text-gray-700' }}">
+                                        {{ $db->realtime_stats['active'] ?? 0 }}
+                                    </span>
+                                </td>
+                                <td class="py-3 text-center">
+                                    <span class="{{ ($db->realtime_stats['idle'] ?? 0) >= $db->idle_threshold ? 'text-yellow-600' : 'text-gray-700' }}">
+                                        {{ $db->realtime_stats['idle'] ?? 0 }}
+                                    </span>
+                                </td>
+                                <td class="py-3 text-center text-gray-700">{{ $db->realtime_stats['locked'] ?? 0 }}</td>
+                                <td class="py-3 text-center">
+                                    <span class="px-2 py-1 rounded text-xs font-medium {{ ($db->is_reachable ?? false) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                        {{ ($db->is_reachable ?? false) ? 'Online' : 'Offline' }}
                                     </span>
                                 </td>
                                 <td class="py-3">
@@ -278,21 +286,21 @@
                             </div>
                             @endif
                             <div>
-                                <p class="text-sm text-gray-500">Active Threshold</p>
-                                <p class="font-medium text-gray-800">{{ $viewDatabase->active_threshold }}</p>
+                                <p class="text-sm text-gray-500">Active Connections</p>
+                                <p class="font-semibold text-gray-800">{{ $viewDatabase->realtime_stats['active'] ?? 0 }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Idle Threshold</p>
-                                <p class="font-medium text-gray-800">{{ $viewDatabase->idle_threshold }}</p>
+                                <p class="text-sm text-gray-500">Idle Connections</p>
+                                <p class="font-medium text-gray-800">{{ $viewDatabase->realtime_stats['idle'] ?? 0 }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Locked Threshold</p>
-                                <p class="font-medium text-gray-800">{{ $viewDatabase->lock_threshold }}</p>
+                                <p class="text-sm text-gray-500">Locked / Suspended</p>
+                                <p class="font-medium text-gray-800">{{ $viewDatabase->realtime_stats['locked'] ?? 0 }}</p>
                             </div>
                             <div>
                                 <p class="text-sm text-gray-500">Status</p>
-                                <span class="px-2 py-1 rounded text-xs font-medium {{ $viewDatabase->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                    {{ $viewDatabase->is_active ? 'Active' : 'Inactive' }}
+                                <span class="px-2 py-1 rounded text-xs font-medium {{ ($viewDatabase->is_reachable ?? false) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                    {{ ($viewDatabase->is_reachable ?? false) ? 'Online' : 'Offline' }}
                                 </span>
                             </div>
                         </div>

@@ -1,0 +1,21 @@
+{
+    "Dashboard": "Dashboard",
+    "Servers": "Servers",
+    "Databases": "Databases",
+    "Organisations": "Organisations",
+    "Users": "Users",
+    "Audit Logs": "Audit Logs",
+    "Profile": "Profile",
+    "Log Out": "Log Out",
+    "Language": "Language",
+    "Version": "Version",
+    "Time": "Time",
+    "Jakarta Time": "Jakarta Time",
+    "Name": "Name",
+    "Email": "Email",
+    "Location": "Location",
+    "Status": "Status",
+    "Actions": "Actions",
+    "Active": "Active",
+    "Inactive": "Inactive"
+}

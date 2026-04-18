@@ -1,0 +1,21 @@
+{
+    "Dashboard": "Dasbor",
+    "Servers": "Server",
+    "Databases": "Basis Data",
+    "Organisations": "Organisasi",
+    "Users": "Pengguna",
+    "Audit Logs": "Log Audit",
+    "Profile": "Profil",
+    "Log Out": "Keluar",
+    "Language": "Bahasa",
+    "Version": "Versi",
+    "Time": "Waktu",
+    "Jakarta Time": "Waktu Jakarta",
+    "Name": "Nama",
+    "Email": "Email",
+    "Location": "Lokasi",
+    "Status": "Status",
+    "Actions": "Aksi",
+    "Active": "Aktif",
+    "Inactive": "Tidak Aktif"
+}

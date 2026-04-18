@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Database;
-use App\Services\PostgreSqlConnector;
+use App\Services\DatabaseConnector;
 use Livewire\Component;
 
 class RealtimeDatabaseMonitor extends Component
@@ -34,7 +34,6 @@ class RealtimeDatabaseMonitor extends Component
             $this->loadData();
         }
     }
-
     public function loadData()
     {
         $this->database = Database::find($this->databaseId);
@@ -45,6 +44,7 @@ class RealtimeDatabaseMonitor extends Component
         }
 
         $config = [
+            'type' => $this->database->type,
             'host' => $this->database->host,
             'port' => $this->database->port,
             'database' => $this->database->database,
@@ -53,8 +53,9 @@ class RealtimeDatabaseMonitor extends Component
         ];
 
         try {
-            $connector = new PostgreSqlConnector();
+            $connector = new DatabaseConnector();
             
+            // Validate driver first
             $this->stats = $connector->getDatabaseStats($config);
             $this->info = $connector->getDatabaseInfo($config);
             $this->connections = $connector->getConnectionInfo($config);
@@ -64,6 +65,11 @@ class RealtimeDatabaseMonitor extends Component
             $this->uptime = $this->calculateUptime();
         } catch (\Exception $e) {
             $this->error = $e->getMessage();
+            if (str_contains($this->error, 'could not find driver') || str_contains($this->error, 'Driver for')) {
+                $this->error = "🔌 Driver Missing: " . $this->error . " Please enable the required extension in your php.ini and restart Laragon.";
+            } elseif (str_contains($this->error, 'Connection refused')) {
+                $this->error = "🚫 Connection Refused: The database server at {$this->database->host}:{$this->database->port} is not responding. Please check if the server is running and remote access is enabled.";
+            }
             $this->isConnected = false;
         }
     }

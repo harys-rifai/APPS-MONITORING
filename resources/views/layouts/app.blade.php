@@ -97,29 +97,34 @@
 
                 <div class="flex-1 py-4">
                     <div class="space-y-1 px-2">
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="sidebar-item" data-label="Dashboard">
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="sidebar-item" data-label="{{ __('Dashboard') }}">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                             </svg>
                         </x-nav-link>
-                        <x-nav-link :href="route('servers')" :active="request()->routeIs('servers')" class="sidebar-item" data-label="Servers">
+                        <x-nav-link :href="route('servers')" :active="request()->routeIs('servers')" class="sidebar-item" data-label="{{ __('Servers') }}">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
                             </svg>
                         </x-nav-link>
-<x-nav-link :href="route('databases')" :active="request()->routeIs('databases')" class="sidebar-item" data-label="Databases">
+                        <x-nav-link :href="route('databases')" :active="request()->routeIs('databases')" class="sidebar-item" data-label="{{ __('Databases') }}">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s8-1.79 8-4"></path>
                             </svg>
                         </x-nav-link>
-                        <x-nav-link :href="route('organisations')" :active="request()->routeIs('organisations')" class="sidebar-item" data-label="organisation">
+                        <x-nav-link :href="route('organisations')" :active="request()->routeIs('organisations')" class="sidebar-item" data-label="{{ __('Organisations') }}">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
                         </x-nav-link>
-                        <x-nav-link :href="route('users')" :active="request()->routeIs('users')" class="sidebar-item" data-label="Users">
+                        <x-nav-link :href="route('users')" :active="request()->routeIs('users')" class="sidebar-item" data-label="{{ __('Users') }}">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </x-nav-link>
+                        <x-nav-link :href="route('audit-logs')" :active="request()->routeIs('audit-logs')" class="sidebar-item" data-label="{{ __('Audit Logs') }}">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                         </x-nav-link>
                     </div>
@@ -138,6 +143,13 @@
                                 <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                             </div>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <div class="px-4 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Language</div>
+                            <div class="flex items-center px-4 py-1 gap-2">
+                                <a href="{{ route('language.switch', 'en') }}" class="px-2 py-0.5 rounded text-[10px] font-bold {{ app()->getLocale() == 'en' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">EN</a>
+                                <a href="{{ route('language.switch', 'id') }}" class="px-2 py-0.5 rounded text-[10px] font-bold {{ app()->getLocale() == 'id' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">ID</a>
+                            </div>
+                            <div class="border-t border-gray-100 my-1"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log Out</button>

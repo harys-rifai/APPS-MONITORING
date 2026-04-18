@@ -14,6 +14,24 @@ Advanced Server and Database Monitoring System with Multi-Tenant Architecture, R
 - **Roles**: Admin (Org), Branch Manager, Line Manager, Supervisor, and User.
 - **Isolation**: Roles are hierarchical but strictly isolated per organization.
 
+### 🛠️ Requirements & Database Drivers
+
+To monitor different database types, ensure the corresponding PHP extensions are enabled in your `php.ini`:
+
+- **PostgreSQL / EDB**: `extension=pdo_pgsql`
+- **SQL Server (MSSQL)**: `extension=pdo_sqlsrv` (Windows) or `extension=pdo_dblib` (Linux)
+- **MySQL / Cloud SQL**: `extension=pdo_mysql`
+- **Oracle**: `extension=pdo_oci`
+
+### Troubleshooting Connection Errors
+- **Connection Refused**: Check if the database server is running and configured to accept remote connections (e.g., `postgresql.conf` for Postgres).
+- **Driver Not Found**: Ensure the extension is enabled and PHP has been restarted.
+- **WIB Time**: All logs and charts are synchronized to Jakarta Time (WIB).
+
+## 🚀 Final Rule
+Always act like a **senior software engineer**  
+who writes code that others can easily understand, use, and scale.
+
 ### 3. Monitoring Capabilities
 - **Server Monitoring**: Real-time tracking of CPU, RAM, Disk, and Network usage.
 - **Database Monitoring**: Support for PostgreSQL, MySQL, SQL Server, and Oracle.
