@@ -8,7 +8,7 @@
   }
 
   .login-glass-card {
-    @apply glass-card relative overflow-hidden bg-gradient-to-b from-white/90 to-white/70 dark:from-slate-800/80 dark:to-slate-900/60 border-white/30 dark:border-slate-700/50 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] before:absolute before:inset-0 before:bg-gradient-to-r before:from-indigo-500/5 before:to-purple-500/5 before:blur-xl;
+    @apply glass-card relative overflow-hidden bg-gradient-to-b from-white/90 to-white/70 dark:from-slate-800/80 dark:to-slate-900/60 border-white/30 dark:border-slate-700/50 shadow-2xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] before:absolute before:inset-0 before:bg-gradient-to-r before:from-indigo-500/5 before:to-purple-500/5 before:blur-xl;
   }
 
   .btn-primary {
@@ -16,7 +16,7 @@
   }
 
   .btn-login {
-    @apply w-full btn-primary relative overflow-hidden group;
+    @apply w-full btn-primary relative overflow-hidden;
   }
   .btn-login::before {
     content: '';
@@ -41,7 +41,7 @@
   }
 
   .input-modern, .text-input {
-    @apply relative block w-full px-4 py-4 text-lg bg-white/60 backdrop-blur-sm border-0 border-b-2 border-slate-200 focus:border-indigo-500 rounded-none shadow-none focus:shadow-none transition-all duration-300 font-['figtree'] text-slate-800 dark:text-slate-200 dark:bg-slate-800/50 dark:border-slate-600 focus:dark:border-indigo-400 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0 peer;
+    @apply relative block w-full px-4 py-4 text-lg bg-white/60 backdrop-blur-sm border-0 border-b-2 border-slate-200 focus:border-indigo-500 rounded-none shadow-none focus:shadow-none transition-all duration-300 font-['figtree'] text-slate-800 dark:text-slate-200 dark:bg-slate-800/50 dark:border-slate-600 focus:dark:border-indigo-400 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0;
   }
   .input-modern:focus ~ .floating-label,
   .text-input:focus ~ label,
@@ -129,6 +129,149 @@
   }
   .shake-error {
     animation: shake 0.5s ease-in-out;
+  }
+
+  /* Form animations */
+  @keyframes slideIn {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-slideIn {
+    animation: slideIn 0.6s ease-out forwards;
+  }
+
+  /* Astro login enhancements */
+  .forgot-btn {
+    @apply flex-1 bg-white/80 hover:bg-white/90 backdrop-blur-md text-slate-800 font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl border border-slate-200/50 hover:border-slate-300/70 dark:bg-slate-800/80 dark:hover:bg-slate-700/90 dark:text-slate-200 dark:border-slate-600/50 dark:hover:border-slate-500/70 font-['figtree'] text-sm transition-all duration-300 flex items-center justify-center;
+  }
+  .password-container {
+    @apply relative;
+  }
+  .password-toggle {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/50 dark:hover:bg-slate-900/50 transition-all cursor-pointer text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 w-6 h-6 flex items-center justify-center;
+  }
+  .checkbox-custom {
+    @apply appearance-none w-5 h-5 border-2 border-slate-300 dark:border-slate-600 rounded bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm cursor-pointer hover:border-indigo-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 checked:bg-gradient-to-r checked:from-indigo-500 checked:to-purple-600 checked:border-transparent transition-all duration-200;
+  }
+  .checkbox-custom:checked::after {
+    content: '✓';
+    @apply absolute -inset-0.5 text-white font-bold text-xs flex items-center justify-center leading-none;
+  }
+
+  /* Astro Theme Enhancements */
+  .astro-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .astro-star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite ease-in-out;
+  }
+  .astro-star:nth-child(odd) {
+    animation-delay: -1s;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .cosmic-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: 400% 400%;
+    animation: cosmicShift 8s ease infinite;
+  }
+  @keyframes cosmicShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .nebula-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  .nebula-effect::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+    animation: nebulaRotate 20s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes nebulaRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .galaxy-border {
+    position: relative;
+  }
+  .galaxy-border::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd);
+    background-size: 400% 400%;
+    border-radius: inherit;
+    animation: galaxyFlow 6s ease infinite;
+    z-index: -1;
+  }
+  @keyframes galaxyFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .meteor-shower {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: meteorFall 3s linear infinite;
+  }
+  .meteor-shower::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, white);
+    border-radius: 50%;
+    animation: meteorTrail 3s linear infinite;
+  }
+  @keyframes meteorFall {
+    0% { transform: translate(0, 0) rotate(45deg); opacity: 1; }
+    100% { transform: translate(200px, 200px) rotate(45deg); opacity: 0; }
+  }
+  @keyframes meteorTrail {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .form-animate {
+    @apply opacity-0 animate-slideIn;
+    animation-fill-mode: forwards;
+  }
+  @keyframes slideIn {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
 }
 

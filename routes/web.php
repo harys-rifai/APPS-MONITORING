@@ -25,6 +25,22 @@ Route::get('/users', UserList::class)->middleware(['auth', 'verified'])->name('u
 Route::get('/audit-logs', AuditLogList::class)->middleware(['auth', 'verified'])->name('audit-logs');
 Route::get('/language/{locale}', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('language.switch');
 
+Route::get('/__debug/run-time-config', function () {
+    return response()->json([
+        'env_app_key' => env('APP_KEY'),
+        'config_app_key' => config('app.key'),
+        'config_app_debug' => config('app.debug'),
+        'env_db_connection' => env('DB_CONNECTION'),
+        'config_db_connection' => config('database.default'),
+        'config_db_host' => config('database.connections.' . config('database.default') . '.host'),
+        'config_db_port' => config('database.connections.' . config('database.default') . '.port'),
+        'config_db_database' => config('database.connections.' . config('database.default') . '.database'),
+        'env_exists' => file_exists(base_path('.env')),
+        'environment_path' => app()->environmentPath(),
+        'environment_file' => app()->environmentFile(),
+    ]);
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

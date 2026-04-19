@@ -36,7 +36,7 @@ class UserList extends Component
 
     public function mount()
     {
-$this->organisations = Cache::remember('active_orgs', 3600, fn () => Organisation::where('is_active', true)->get()->toArray());
+        $this->organisations = Organisation::where('is_active', true)->get();
     }
 
     public function render()
@@ -53,7 +53,7 @@ $this->organisations = Cache::remember('active_orgs', 3600, fn () => Organisatio
                     ->orWhere('email', 'like', '%' . $this->search . '%');
             })
             ->orderBy('created_at', 'desc')
-->simplePaginate(10);
+->paginate(10);
         
         return view('livewire.user-list', compact('users'));
     }
@@ -75,14 +75,12 @@ $this->organisations = Cache::remember('active_orgs', 3600, fn () => Organisatio
             $this->resetFields();
         }
         $this->showModal = true;
-        $this->dispatch('modalOpened');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetFields();
-        $this->dispatch('modalClosed');
     }
 
     public function viewUser($id)
@@ -94,14 +92,17 @@ $this->organisations = Cache::remember('active_orgs', 3600, fn () => Organisatio
         }
         $this->viewUser = $user;
         $this->showViewModal = true;
-        $this->dispatch('modalOpened');
+    }
+
+    public function openView($id)
+    {
+        $this->viewUser($id);
     }
 
     public function closeViewModal()
     {
         $this->showViewModal = false;
         $this->viewUser = null;
-        $this->dispatch('modalClosed');
     }
 
     public function resetFields()
@@ -163,14 +164,12 @@ $this->organisations = Cache::remember('active_orgs', 3600, fn () => Organisatio
     {
         $this->userId = $id;
         $this->showDeleteModal = true;
-        $this->dispatch('modalOpened');
     }
 
     public function cancelDelete()
     {
         $this->userId = null;
         $this->showDeleteModal = false;
-        $this->dispatch('modalClosed');
     }
 
     public function executeDelete()

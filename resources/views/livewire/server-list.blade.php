@@ -3,7 +3,7 @@
         <div class="p-6">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Server Management</h2>
-                <button wire:click="openModal()" class="bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-sm font-medium text-white">
+                <button wire:click="openModal()" class="btn-soft flex items-center gap-2 text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -12,10 +12,26 @@
             </div>
 
             @if(session()->has('message'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 2000)" 
+                     class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                     {{ session('message') }}
                 </div>
             @endif
+
+            @if(session()->has('error'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 2000)" 
+                     class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <div x-data="{ show: false, message: '' }" 
+                 x-on:pingResult.window="message = $event.detail ? 'Server is reachable!' : 'Server is not reachable!'; show = true; setTimeout(() => show = false, 2000)"
+                 x-show="show" 
+                 :class="show ? 'block' : 'hidden'"
+                 class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <span x-text="message"></span>
+            </div>
 
             <div class="mb-4">
                 <div class="relative max-w-md">
@@ -88,7 +104,7 @@
                                                 'status' => $server->is_active ? 'Active' : 'Inactive'
                                             ];
                                         @endphp
-                                        <button wire:click="viewServer({{ $server->id }})" class="text-indigo-600 hover:text-indigo-800 p-0.5 rounded-sm hover:bg-indigo-100" title="View">
+                                        <button type="button" wire:click="openView({{ $server->id }})" class="text-indigo-600 hover:text-indigo-800 p-0.5 rounded-sm hover:bg-indigo-100 cursor-pointer">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -118,15 +134,9 @@
         </div>
 
 @if($showModal)
-            <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
-                 x-transition:enter-start="opacity-0" 
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-200" 
-                 x-transition:leave-start="opacity-100" 
-                 x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" x-data="{ loading: false }">
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div class="fixed inset-0" wire:click="closeModal"></div>
-                <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
+                <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[90vh] relative z-10 overflow-y-auto">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             <div class="p-1.5 bg-indigo-100 rounded-lg">
@@ -220,7 +230,7 @@
                         </div>
                         <div class="flex justify-end gap-2 mt-3">
                             <button type="button" wire:click="closeModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700" wire:loading.attr="disabled">Cancel</button>
-                            <button type="submit" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm text-white flex items-center gap-1" wire:loading.attr="disabled">
+                            <button type="submit" class="btn-soft w-full" wire:loading.attr="disabled">
                                 <div wire:loading wire:target="save" class="animate-spin h-3 w-3 text-white mr-1" fill="none">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 12 6.627 12 14s6.627 14 14 14v-4a8 8 0 01-8 8H4z"></path>
@@ -235,92 +245,82 @@
             </div>
         @endif
 
-@if($showViewModal && $viewServer)
-            <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
-                 x-transition:enter-start="opacity-0 scale-95" 
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-200" 
-                 x-transition:leave-start="opacity-100 scale-100" 
-                 x-transition:leave-end="opacity-0 scale-95"
-                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="fixed inset-0" wire:click="closeViewModal"></div>
-                <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[70vh] overflow-y-auto relative z-10">
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="flex items-center gap-2">
-                            <div class="p-1.5 bg-indigo-100 rounded-lg">
-                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
-                                </svg>
-                            </div>
-                            <h2 class="text-base font-semibold text-gray-800">Server Details</h2>
-                        </div>
-                        <button wire:click="closeViewModal" class="text-gray-400 hover:text-gray-600 p-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
+@if($showViewModal)
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="fixed inset-0" wire:click="closeViewModal"></div>
+        <div class="bg-white rounded-xl p-4 w-full max-w-md border border-gray-200 shadow-lg max-h-[80vh] overflow-y-auto relative z-10">
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="p-1.5 bg-indigo-100 rounded-lg">
+                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                        </svg>
                     </div>
-                    <div class="space-y-2 text-sm">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <p class="text-sm text-gray-500">Name</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->name }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">Hostname</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->hostname }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">IP Address</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->ip }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">OS</p>
-                                <p class="font-medium text-gray-800 uppercase">{{ $viewServer->os }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">Type</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->type }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">Location</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->location ?? '-' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">CPU Threshold</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->cpu_threshold }}%</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">RAM Threshold</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->ram_threshold }}%</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">Disk Threshold</p>
-                                <p class="font-medium text-gray-800">{{ $viewServer->disk_threshold }}%</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500">Status</p>
-                                <span class="px-2 py-1 rounded text-xs font-medium {{ $viewServer->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                    {{ $viewServer->is_active ? 'Active' : 'Inactive' }}
-                                </span>
-                            </div>
-                        </div>
+                    <h2 class="text-base font-semibold text-gray-800">Server Details</h2>
+                </div>
+                <button wire:click="closeViewModal" class="text-gray-400 hover:text-gray-600 p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            @if($viewServer)
+            <div class="space-y-2 text-sm">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Name</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->name }}</p>
                     </div>
-                    <div class="flex justify-end mt-3">
-                        <button wire:click="closeViewModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700">Close</button>
+                    <div>
+                        <p class="text-sm text-gray-500">Hostname</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->hostname }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">IP Address</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->ip }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">OS</p>
+                        <p class="font-medium text-gray-800 uppercase">{{ $viewServer->os }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Type</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->type }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Location</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->location ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">CPU Threshold</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->cpu_threshold }}%</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">RAM Threshold</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->ram_threshold }}%</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Disk Threshold</p>
+                        <p class="font-medium text-gray-800">{{ $viewServer->disk_threshold }}%</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Status</p>
+                        <span class="px-2 py-1 rounded text-xs font-medium {{ $viewServer->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                            {{ $viewServer->is_active ? 'Active' : 'Inactive' }}
+                        </span>
                     </div>
                 </div>
             </div>
-        @endif
+            @endif
+            <div class="flex justify-end mt-3">
+                <button wire:click="closeViewModal" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700">Close</button>
+            </div>
+        </div>
+    </div>
+@endif
 
 @if($showDeleteModal)
-            <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
-                 x-transition:enter-start="opacity-0" 
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-200" 
-                 x-transition:leave-start="opacity-100" 
-                 x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div class="fixed inset-0 bg-black/30" wire:click="cancelDelete"></div>
                 <div class="bg-white rounded-xl p-4 w-full max-w-sm border border-gray-200 shadow-lg relative z-10">
                     <div class="text-center">

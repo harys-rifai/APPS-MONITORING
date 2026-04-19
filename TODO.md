@@ -1,14 +1,20 @@
-# Modern Login Implementation TODO
+# Task: Seed 40 data records per table and fix pagination to show current page, next, and data count consistently
 
-## [x] 0. Create TODO.md and track progress (updated)
-## [x] 1. Update layouts/guest.blade.php - Modern gradient background ✅
-## [x] 2. Update resources/css/app.css - Add login utilities/classes ✅
+## Status: [IN PROGRESS]
 
-## [x] 3. Update components (primary-button, text-input, input-label, input-error) ✅
-## [x] 4. Update resources/views/auth/login.blade.php - Glass form ✅
-## [x] 5. Update README.md - Document feature ✅
-## [x] 6. Git: create branch blackboxai/modern-login, commit changes ✅
-## [ ] 7. Build assets: npm run dev
-## [ ] 8. Test at http://localhost:8000/login
-## [ ] 9. Push to git
-## [ ] 10. Complete task
+### Steps:
+1. [✅] Update `database/seeders/SampleDataSeeder.php` to seed 40 records each for Organisation, User, Server, Database, and add Branch seeding.
+2. [ ] Execute `php artisan db:seed --class=SampleDataSeeder` to populate database.
+3. [ ] Verify seeding success (check record counts).
+4. [ ] Add consistent pagination info block to all 6 list blade views:
+   - `resources/views/livewire/user-list.blade.php`
+   - `resources/views/livewire/organisation-list.blade.php`
+   - `resources/views/livewire/branch-list.blade.php`
+   - `resources/views/livewire/server-list.blade.php`
+   - `resources/views/livewire/database-list.blade.php`
+   - `resources/views/livewire/audit-log-list.blade.php`
+5. [ ] Test pagination displays "Showing X-Y of Z", current page, next links consistently.
+6. [ ] Complete task.
+
+**Next step: Edit SampleDataSeeder.php**
+

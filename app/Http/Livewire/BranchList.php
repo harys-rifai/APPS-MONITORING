@@ -49,7 +49,7 @@ class BranchList extends Component
                     ->orWhere('location', 'like', '%' . $this->search . '%');
             })
             ->orderBy('created_at', 'desc')
-->simplePaginate(10);
+->paginate(10);
         
         return view('livewire.branch-list', compact('branches'));
     }

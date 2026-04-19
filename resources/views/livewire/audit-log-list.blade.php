@@ -102,13 +102,7 @@
 
                 {{-- View Modal --}}
 @if($showViewModal && $selectedLog)
-                    <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" 
-                         x-transition:enter-start="opacity-0 scale-95" 
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-200" 
-                         x-transition:leave-start="opacity-100 scale-100" 
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                         <div class="fixed inset-0" wire:click="closeViewModal"></div>
                         <div class="bg-white rounded-xl p-6 w-full max-w-lg border border-gray-200 shadow-lg max-h-[80vh] overflow-y-auto relative z-10">
                             <div class="flex items-center justify-between mb-4">

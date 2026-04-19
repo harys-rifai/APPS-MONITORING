@@ -15,8 +15,10 @@
     <body class="font-['figtree'] antialiased overflow-hidden">
         <!-- Animated Background Particles -->
         <div class="fixed inset-0 pointer-events-none z-0">
-            <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-purple-900/30 dark:to-slate-900"></div>
+            <div class="absolute inset-0 cosmic-gradient"></div>
             <div id="particles" class="absolute inset-0 opacity-20 dark:opacity-30"></div>
+            <!-- Nebula effect -->
+            <div class="absolute inset-0 nebula-effect"></div>
         </div>
 
         <!-- Main Content -->
@@ -38,7 +40,7 @@
 
             <!-- Login Card -->
             <div class="w-full max-w-md">
-                <div class="login-glass-card p-8 sm:p-10">
+                <div class="login-glass-card galaxy-border p-8 sm:p-10">
                     {{ $slot }}
                 </div>
             </div>

@@ -17,7 +17,19 @@ Advanced Server and Database Monitoring System with Multi-Tenant Architecture, R
 - **Roles**: Admin (Org), Branch Manager, Line Manager, Supervisor, and User.
 - **Isolation**: Roles are hierarchical but strictly isolated per organization.
 
-### 🛠️ Requirements & Database Drivers
+### 3. Monitoring Capabilities
+- **Server Monitoring**: Real-time tracking of CPU, RAM, Disk, and Network usage.
+- **Database Monitoring**: Support for PostgreSQL, MySQL, SQL Server, and Oracle.
+- **Real-time PostgreSQL Monitor**: Deep dive into active connections, query duration, and table sizes.
+
+### 4. UI/UX (Modern & Responsive)
+- ✨ **Modern Glassmorphism Login**: Premium gradient background with animated particles, floating glass form card, neon glow inputs, shimmer button effects, floating labels, and responsive design.
+- **Horizon UI Theme**: Clean, modern admin dashboard style.
+- **Animated Header**: Real-time clock (WIB) and dynamic date positioning.
+- **Collapsible Sidebar**: Space-efficient navigation with tooltips.
+- **App Versioning**: Automatic version tracking displayed in the sidebar footer.
+
+## 🛠️ Requirements & Database Drivers
 
 To monitor different database types, ensure the corresponding PHP extensions are enabled in your `php.ini`:
 
@@ -30,24 +42,6 @@ To monitor different database types, ensure the corresponding PHP extensions are
 - **Connection Refused**: Check if the database server is running and configured to accept remote connections (e.g., `postgresql.conf` for Postgres).
 - **Driver Not Found**: Ensure the extension is enabled and PHP has been restarted.
 - **WIB Time**: All logs and charts are synchronized to Jakarta Time (WIB).
-
-## 🚀 Final Rule
-Always act like a **senior software engineer**  
-who writes code that others can easily understand, use, and scale.
-
-### 3. Monitoring Capabilities
-- **Server Monitoring**: Real-time tracking of CPU, RAM, Disk, and Network usage.
-- **Database Monitoring**: Support for PostgreSQL, MySQL, SQL Server, and Oracle.
-- **Real-time PostgreSQL Monitor**: Deep dive into active connections, query duration, and table sizes.
-
-### 4. UI/UX (Modern & Responsive)
-- ✨ **Modern Glassmorphism Login**: Premium gradient background with animated particles, floating glass form card, neon glow inputs, shimmer button effects, floating labels, and responsive design.
-- **Aurora/Glassmorphism Theme**: Translucent cards with backdrop blur.
-- **Animated Header**: Real-time clock (WIB) and dynamic date positioning.
-- **Collapsible Sidebar**: Space-efficient navigation with tooltips.
-- **App Versioning**: Automatic version tracking displayed in the sidebar footer.
-
-**Updated:** Modern login page at `/login` features glassmorphism design with backdrop-blur effects, gradient buttons, floating labels, and smooth micro-interactions.
 
 ## 🛠️ Tech Stack
 
@@ -88,6 +82,13 @@ php artisan serve
 
 ## 📈 Application Versioning
 The system tracks updates in the `app_versions` table. The current version is displayed at the bottom of the left sidebar.
+
+- **v1.0.8**: Fix Livewire modal issues and improve button actions, add flash message timeout 2s.
+- **v1.0.7**: Fix pagination and seed 40 data per table.
+- **v1.0.6**: Horizon UI theme adoption.
+- **v1.0.5**: Soft UI styling improvements.
+- **v1.0.4**: Add clock animation on header/navbar.
+- **v1.0.3**: Add multi-language support (EN/ID) and clock with WIB timezone.
 - **v1.0.2**: Add scheduled ping job every 15 minutes.
 - **v1.0.1**: Add ping OK/Failed status to servers.
 - **v1.1.1**: Idempotent Seeding & Auto-installation setup.

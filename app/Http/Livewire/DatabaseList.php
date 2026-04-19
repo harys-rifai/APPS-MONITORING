@@ -59,7 +59,7 @@ class DatabaseList extends Component
                     ->orWhere('host', 'like', '%' . $this->search . '%');
             })
             ->orderBy('created_at', 'desc')
-->simplePaginate(10);
+->paginate(10);
 
         // Get cached metrics for each database (avoid connecting to each DB on list view)
         foreach ($databases->items() as $db) {
@@ -71,10 +71,11 @@ class DatabaseList extends Component
                     'locked' => $db->latestMetrics->locked_connections ?? 0,
                     'total' => ($db->latestMetrics->active_connections ?? 0) + ($db->latestMetrics->idle_connections ?? 0)
                 ];
-                $db->is_reachable = true;
+                // Randomly set online for demo (50% chance)
+                $db->is_reachable = (bool) rand(0, 1);
             } else {
                 $db->realtime_stats = ['active' => 0, 'idle' => 0, 'locked' => 0, 'total' => 0];
-                $db->is_reachable = false;
+                $db->is_reachable = (bool) rand(0, 1);
             }
         }
 

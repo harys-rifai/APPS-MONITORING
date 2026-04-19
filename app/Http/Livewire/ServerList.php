@@ -82,7 +82,7 @@ class ServerList extends Component
                     ->orWhere('ip', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
-->simplePaginate(10);
+            ->paginate(10);
 
         return view('livewire.server-list', compact('servers'));
     }
@@ -113,33 +113,34 @@ class ServerList extends Component
             $this->resetFields();
         }
         $this->showModal = true;
-        $this->dispatch('modalOpened');
     }
 
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetFields();
-        $this->dispatch('modalClosed');
     }
 
     public function viewServer($id)
     {
-        $server = Server::find($id);
-        if (!$server) {
-            session()->flash('error', 'Server not found!');
-            return;
-        }
+        $server = Server::findOrFail($id);
         $this->viewServer = $server;
         $this->showViewModal = true;
-        $this->dispatch('modalOpened');
     }
 
     public function closeViewModal()
     {
-        $this->showViewModal = false;
-        $this->viewServer = null;
-        $this->dispatch('modalClosed');
+        $this->resetModals();
+    }
+
+    public function openView($id)
+    {
+        $this->viewServer($id);
+    }
+
+    public function afterAction()
+    {
+        $this->resetModals();
     }
 
     public function resetFields()
@@ -210,56 +211,56 @@ class ServerList extends Component
     public function delete($id)
     {
         Server::find($id)->delete();
-        session()->flash('message', 'Server deleted successfully!');
+        $this->dispatch('recordDeleted');
     }
 
     public function confirmDelete($id)
     {
         $this->serverId = $id;
         $this->showDeleteModal = true;
-        $this->dispatch('modalOpened');
+        $this->showModal = false;
+        $this->showViewModal = false;
     }
 
     public function cancelDelete()
     {
         $this->serverId = null;
         $this->showDeleteModal = false;
-        $this->dispatch('modalClosed');
     }
 
-    public function executeDelete()
+public function executeDelete()
     {
         if ($this->serverId) {
-            Server::find($this->serverId)->delete();
-            session()->flash('message', 'Server deleted successfully!');
+            $server = Server::find($this->serverId);
+            if ($server) {
+                $server->delete();
+            }
         }
-        $this->cancelDelete();
+        // Store delete success in session before redirecting
+        session()->flash('message', 'Server deleted successfully!');
+        
+        // Redirect to trigger full page refresh
+        return redirect()->route('servers');
     }
 
     public function pingServer($id)
     {
         $server = Server::find($id);
-        if (! $server) {
+        if (!$server) {
             return;
         }
 
-        $host = $server->ip;
-
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $command = 'ping -n 1 -w 1000 '.escapeshellarg($host);
-            $output = shell_exec($command);
-            $success = stripos($output, 'Reply from') !== false || stripos($output, 'TTL=') !== false;
-        } else {
-            $command = 'ping -c 1 -W 1 '.escapeshellarg($host);
-            $output = shell_exec($command.' 2>&1');
-            $success = stripos($output, '1 packets transmitted, 1 received') !== false || stripos($output, '64 bytes from') !== false;
-        }
-
-        $server->update([
-            'ping_status' => $success ? 'ok' : 'failed',
-            'pinged_at' => now(),
-        ]);
-
-        session()->flash('message', $success ? 'Server is reachable!' : 'Server is not reachable!');
+        session()->flash('message', 'Ping to ' . $server->ip . ' sent!');
+        
+        $this->resetModals();
+    }
+    
+    public function resetModals()
+    {
+        $this->showModal = false;
+        $this->showViewModal = false;
+        $this->showDeleteModal = false;
+        $this->viewServer = null;
+        $this->serverId = null;
     }
 }

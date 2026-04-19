@@ -29,13 +29,12 @@ class OrganisationList extends Component
 
     public function render()
     {
-        $organisations = Organisation::where(function($query) {
-            $query->where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('location', 'like', '%' . $this->search . '%');
+$organisations = Organisation::where(function($query) {
+            $query->where('name', 'like', '%' . $this->search . '%');
         })
         ->withCount(['users', 'servers', 'databases'])
-        ->orderBy('created_at', 'desc')
-        ->simplePaginate(10);
+->orderBy('created_at', 'desc')
+->paginate(10);
         
         return view('livewire.organisation-list', compact('organisations'));
     }
@@ -50,8 +49,7 @@ class OrganisationList extends Component
             }
             $this->organisationId = $organisation->id;
             $this->name = $organisation->name;
-            $this->location = $organisation->location ?? '';
-            $this->is_active = $organisation->is_active;
+        $this->is_active = $organisation->is_active;
         } else {
             $this->resetFields();
         }

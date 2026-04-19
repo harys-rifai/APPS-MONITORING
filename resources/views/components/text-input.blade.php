@@ -1,1 +1,1 @@
-<input {{ $attributes->merge(['class' => 'input-modern']) }} />
+<input type="{{ $type }}" {{ $attributes->merge(['class' => 'horizon-input w-full']) }}>

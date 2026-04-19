@@ -3,73 +3,59 @@
 @if (isset($links) && $links instanceof \Illuminate\Pagination\LengthAwarePaginator)
     @php
         $paginator = $links;
-        $elements = $paginator->linkFactory()->elements();
     @endphp
 
     @if ($paginator->hasPages())
-        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
-            <div class="flex flex-1 justify-between sm:hidden">
-                @if ($paginator->onFirstPage())
-class="bg-white px-3 py-1 border-r border-t border-b text-gray-500 cursor-not-allowed text-sm font-medium rounded-md"
+        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between mt-6 px-4 py-3 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="text-sm text-gray-500">
+                @if ($paginator->firstItem())
+                    <span class="text-gray-700 font-medium">{{ $paginator->firstItem() }} - {{ $paginator->lastItem() }}</span>
+                    <span class="mx-1">of</span>
+                    <span class="text-gray-700 font-medium">{{ $paginator->total() }} results</span>
                 @else
-class="bg-white px-3 py-1 border-r border-t border-b text-black no-underline hover:bg-gray-50 text-sm font-medium rounded-md"
-                @endif
-
-                @if ($paginator->hasMorePages())
-                    <a href="{{ $paginator->nextPageUrl() }}" class="relative ml-3 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700" rel="next" aria-label="Next Page">Next</a>
-                @else
-                    <span class="relative ml-3 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 cursor-not-allowed">Next</span>
+                    <span>No results</span>
                 @endif
             </div>
 
-            <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-4">
-                        Showing
-                        @if ($paginator->firstItem())
-                            <span class="font-medium">{{ $paginator->firstItem() }}</span>
-                            to
-                            <span class="font-medium">{{ $paginator->lastItem() }}</span>
-                        @else
-                            zero
-                        @endif
-                        of
-                        <span class="font-medium">{{ $paginator->total() }}</span>
-                        results
-                    </p>
-                </div>
+            <div class="text-sm text-gray-500">
+                <span>Page</span>
+                <span class="mx-1 font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg">{{ $paginator->currentPage() }}</span>
+                <span class="mx-1">of</span>
+                <span class="text-gray-700 font-medium">{{ $paginator->lastPage() }}</span>
+            </div>
 
-                <div>
-                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        {{-- Previous Page Link --}}
-                        @if ($paginator->onFirstPage())
-class="bg-white px-3 py-1 border-r border-t border-b text-gray-500 cursor-not-allowed text-sm font-medium rounded-l-md"
-                        @else
-class="bg-white px-3 py-1 border-r border-t border-b text-black no-underline hover:bg-gray-50 text-sm font-medium rounded-l-md"
-                        @endif
+            <div class="flex items-center gap-2">
+                @if ($paginator->onFirstPage())
+                    <button disabled class="px-4 py-2 text-sm font-semibold text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        Prev
+                    </button>
+                @else
+                    <a href="{{ $paginator->previousPageUrl() }}" class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 shadow-md transition-all">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        Prev
+                    </a>
+                @endif
 
-                        {{-- Pagination Elements --}}
-                        @foreach ($elements as $element)
-                            {{-- Array Of Links In Pagination Elements --}}
-                            @if (is_array($element))
-                                @foreach ($element as $page => $url)
-                                    @if ($page == $paginator->currentPage())
-class="bg-yellow-100 border-yellow-500 font-bold text-sm px-3 py-1 border border-gray-300 z-10"
-                                    @else
-class="bg-white px-3 py-1 border border-gray-300 text-black no-underline hover:bg-gray-50 text-sm font-medium"
-                                    @endif
-                                @endforeach
-                            @endif
-                        @endforeach
-
-                        {{-- Next Page Link --}}
-                        @if ($paginator->hasMorePages())
-class="bg-white px-3 py-1 border-r border-t border-b text-black no-underline hover:bg-gray-50 text-sm font-medium rounded-r-md"
-                        @else
-class="bg-white px-3 py-1 border-r border-t border-b text-gray-500 cursor-not-allowed text-sm font-medium rounded-r-md"
-                        @endif
-                    </nav>
-                </div>
+                @if ($paginator->hasMorePages())
+                    <a href="{{ $paginator->nextPageUrl() }}" class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 shadow-md transition-all">
+                        Next
+                        <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                @else
+                    <button disabled class="px-4 py-2 text-sm font-semibold text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                        Next
+                        <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                @endif
             </div>
         </nav>
     @endif

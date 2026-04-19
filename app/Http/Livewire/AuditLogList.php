@@ -31,7 +31,7 @@ class AuditLogList extends Component
             ->when($this->dateTo, fn($q) => $q->where('created_at', '<=', $this->dateTo . ' 23:59:59'));
 
         return view('livewire.audit-log-list', [
-            'logs' => $query->orderBy('created_at', 'desc')->simplePaginate(10),
+            'logs' => $query->orderBy('created_at', 'desc')->paginate(10),
         ]);
     }
 

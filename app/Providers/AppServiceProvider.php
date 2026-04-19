@@ -31,9 +31,14 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('realtime-database-monitor', \App\Http\Livewire\RealtimeDatabaseMonitor::class);
 
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
-            $appVersion = \Illuminate\Support\Facades\Cache::remember('app_version', 3600, function () {
-                return \App\Models\AppVersion::where('is_active', true)->latest()->first()?->version ?? 'v.1.0.0';
-            });
+            try {
+                $appVersion = \Illuminate\Support\Facades\Cache::remember('app_version', 3600, function () {
+                    return \App\Models\AppVersion::where('is_active', true)->latest()->first()?->version ?? 'v.1.0.0';
+                });
+            } catch (\Throwable $exception) {
+                $appVersion = \App\Models\AppVersion::where('is_active', true)->latest()->first()?->version ?? 'v.1.0.0';
+            }
+
             $view->with('appVersion', $appVersion);
         });
     }

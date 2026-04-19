@@ -1,3 +1,3 @@
-<label class="floating-label peer-placeholder-shown:text-base peer-placeholder-shown:top-4 {{ $attributes->getData('class') }}">
+<label class="block text-sm font-medium text-gray-700 mb-1">
     {{ $slot->isEmpty() ? __('Input Label') : $slot }}
 </label>

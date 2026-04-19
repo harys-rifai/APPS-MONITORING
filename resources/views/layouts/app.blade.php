@@ -14,18 +14,124 @@
         @livewireStyles
         <style>
             :root {
-                --primary-color: #6366f1;
-                --primary-hover: #4f46e5;
-                --bg-gradient-start: #f1f5f9;
-                --bg-gradient-end: #e2e8f0;
-                --sidebar-width: 4rem;
+                --brand-500: #6366f1;
+                --brand-600: #4f46e5;
+                --brand-700: #4338ca;
             }
+            
             body {
-                background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
                 min-height: 100vh;
             }
-            .sidebar-hidden { width: 0 !important; overflow: hidden; }
             
+            /* Horizon UI Card */
+            .glass-card {
+                background: #ffffff;
+                border-radius: 1rem;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(226, 232, 240, 0.8);
+            }
+            
+            /* Horizon Header */
+            .glass-header {
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(8px);
+                border-bottom: 1px solid #e2e8f0;
+            }
+            
+            /* Horizon Buttons */
+            .btn-soft {
+                background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                color: white;
+                padding: 0.625rem 1.25rem;
+                border-radius: 0.75rem;
+                font-weight: 600;
+                font-size: 0.875rem;
+                letter-spacing: 0.025em;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+            }
+            .btn-soft:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.5);
+            }
+            
+            /* Horizon Table */
+            .soft-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .soft-table thead th {
+                background: #f9fafb;
+                color: #6b7280;
+                font-weight: 600;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                padding: 1rem;
+                text-align: left;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .soft-table tbody td {
+                padding: 1rem;
+                color: #374151;
+                font-size: 0.875rem;
+                border-bottom: 1px solid #f3f4f6;
+            }
+            .soft-table tbody tr:hover {
+                background: #f9fafb;
+            }
+            
+            /* Horizon Badges */
+            .badge-success {
+                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                color: #065f46;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            .badge-warning {
+                background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+                color: #92400e;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            .badge-danger {
+                background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+                color: #991b1b;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            .badge-info {
+                background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+                color: #1e40af;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            
+            /* Horizon Input */
+            .soft-input {
+                border: 1px solid #e5e7eb;
+                border-radius: 0.75rem;
+                padding: 0.625rem 1rem;
+                font-size: 0.875rem;
+                transition: all 0.2s ease;
+                background: #ffffff;
+            }
+            .soft-input:focus {
+                outline: none;
+                border-color: #6366f1;
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            }
+            
+            /* Horizon Sidebar */
             .sidebar-item {
                 position: relative;
                 display: flex;
@@ -34,18 +140,19 @@
                 width: 100%;
                 padding: 0.75rem;
                 margin-bottom: 0.25rem;
-                border-radius: 0.5rem;
-                color: #64748b;
+                border-radius: 0.75rem;
+                color: #94a3b8;
                 transition: all 0.2s ease;
                 cursor: pointer;
             }
             .sidebar-item:hover {
-                background-color: #eef2ff;
-                color: var(--primary-color);
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
             }
             .sidebar-item.active {
-                background-color: #eef2ff;
-                color: var(--primary-color);
+                background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                color: white;
+                box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
             }
             .sidebar-item::after {
                 content: attr(data-label);
@@ -53,10 +160,10 @@
                 left: 100%;
                 margin-left: 0.75rem;
                 padding: 0.5rem 0.75rem;
-                background-color: #1e293b;
+                background-color: #0f172a;
                 color: white;
-                font-size: 0.875rem;
-                border-radius: 0.375rem;
+                font-size: 0.75rem;
+                border-radius: 0.5rem;
                 white-space: nowrap;
                 opacity: 0;
                 visibility: hidden;
@@ -69,33 +176,25 @@
                 left: calc(100% + 0.5rem);
             }
             
-            .glass-card {
-                background: rgba(255, 255, 255, 0.85);
-                backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.5);
-                border-radius: 1rem;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            }
-            
-            .glass-header {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(8px);
-                border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            /* Horizon Modal */
+            .soft-modal {
+                background: white;
+                border-radius: 1.5rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             }
         </style>
     </head>
 <body class="font-sans antialiased overflow-hidden">
-
-@stack('modals')
-        <div class="flex min-h-screen">
-            <nav id="sidebar" class="flex flex-col bg-white border-r border-gray-200 transition-all duration-300" style="width: 4rem;">
-                <div class="h-16 flex items-center justify-center border-b border-gray-200" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
-                    <a href="{{ route('dashboard') }}" class="flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
-                        </svg>
-                    </a>
-                </div>
+    @stack('modals')
+    <div class="flex min-h-screen bg-gray-50">
+        <nav id="sidebar" class="flex flex-col transition-all duration-300 shadow-xl" style="width: 4rem; background-color: #1e293b;">
+            <div class="h-16 flex items-center justify-center" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                <a href="{{ route('dashboard') }}" class="flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                    </svg>
+                </a>
+            </div>
 
                 <div class="flex-1 py-4">
                     <div class="space-y-1 px-2">
@@ -248,6 +347,48 @@
             function closeViewModal() {
                 document.getElementById('viewModalOverlay').classList.add('hidden');
             }
+
+            // Astro enhancements
+            function createStars() {
+                const container = document.body;
+                if (!container) return;
+
+                const starsContainer = document.createElement('div');
+                starsContainer.className = 'astro-stars';
+                container.appendChild(starsContainer);
+
+                for (let i = 0; i < 50; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'astro-star';
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.width = (Math.random() * 3 + 1) + 'px';
+                    star.style.height = star.style.width;
+                    star.style.animationDelay = Math.random() * 2 + 's';
+                    starsContainer.appendChild(star);
+                }
+            }
+
+            function createMeteor() {
+                const container = document.body;
+                if (!container) return;
+
+                const meteor = document.createElement('div');
+                meteor.className = 'meteor-shower';
+                meteor.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(meteor);
+
+                setTimeout(() => {
+                    meteor.remove();
+                }, 3000);
+            }
+
+            // Initialize astro effects
+            document.addEventListener('DOMContentLoaded', () => {
+                createStars();
+                setInterval(createMeteor, 10000); // Less frequent meteors for dashboard
+            });
+        </script>
 
         </script>
 
